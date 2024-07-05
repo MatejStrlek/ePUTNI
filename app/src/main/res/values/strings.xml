@@ -5,7 +5,7 @@
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_out">Sign Out</string>
     <string name="user_details_will_be_shown_here">User details will be shown here</string>
-    <string name="user_details">Signed in as: %1$s (%2$s)</string>
     <string name="john_doe_estudent_hr">john.doe@estudent.hr</string>
     <string name="allowed_domain">\@estudent.hr</string>
+    <string name="john_doe">John Doe</string>
 </resources>

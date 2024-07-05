@@ -8,37 +8,6 @@
     android:padding="@dimen/_50dp"
     tools:context=".LoginActivity">
 
-    <ImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="@dimen/_128dp"
-        android:layout_height="@dimen/_128dp"
-        tools:src="@tools:sample/avatars"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/_50sp"
-        />
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="John Doe"
-        android:textSize="@dimen/_24sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/_24sp"
-        />
-
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="@string/john_doe_estudent_hr"
-        android:textSize="@dimen/_24sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/_50sp"
-        />
-
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btnSignIn"
         android:layout_width="wrap_content"

@@ -19,6 +19,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hr.algebra.eputni.databinding.ActivityLoginBinding
+import hr.algebra.eputni.framework.startActivity
 
 @Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
@@ -111,7 +112,12 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))){
-                        updateUI(user)
+                        startActivity<MainActivity>(
+                            "user" to user.displayName,
+                            "email" to user.email,
+                            "photo" to user.photoUrl.toString()
+                        )
+                        finish()
                     } else {
                         Log.w(TAG, "Sign-in failed: unauthorized domain")
                         Toast.makeText(this, "Sign-in failed: unauthorized domain", Toast.LENGTH_SHORT).show()
@@ -150,27 +156,18 @@ class LoginActivity : AppCompatActivity() {
         if (user != null) {
             Log.d(TAG, "User signed in: ${user.displayName} (${user.email})")
             Toast.makeText(this, "Welcome, ${user.displayName}!", Toast.LENGTH_SHORT).show()
-
-            binding.tvName.text = user.displayName
-            binding.tvEmail.text = user.email
             binding.btnSignIn.visibility = View.GONE
             binding.btnSignOut.visibility = View.VISIBLE
-            binding.ivAvatar.visibility = View.VISIBLE
-
-            user.photoUrl?.let {
-                Glide.with(this)
-                    .load(it)
-                    .circleCrop()
-                    .into(binding.ivAvatar)
-            }
+            startActivity<MainActivity>(
+                "user" to user.displayName,
+                "email" to user.email,
+                "photo" to user.photoUrl.toString()
+            )
+            finish()
         } else {
             Log.d(TAG, "User not signed in")
-
-            binding.tvName.text = ""
-            binding.tvEmail.text = ""
             binding.btnSignIn.visibility = View.VISIBLE
             binding.btnSignOut.visibility = View.GONE
-            binding.ivAvatar.visibility = View.GONE
         }
     }
 }
