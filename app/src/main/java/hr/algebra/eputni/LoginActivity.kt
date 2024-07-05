@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -118,23 +119,6 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            Log.d(TAG, "User signed in: ${user.displayName} (${user.email})")
-            Toast.makeText(this, "Welcome, ${user.displayName}!", Toast.LENGTH_SHORT).show()
-
-            binding.tvName.text = getString(R.string.user_details, user.displayName, user.email)
-            binding.btnSignIn.visibility = View.GONE
-            binding.btnSignOut.visibility = View.VISIBLE
-        } else {
-            Log.d(TAG, "User not signed in")
-
-            binding.tvName.text = getString(R.string.sign_out)
-            binding.btnSignIn.visibility = View.VISIBLE
-            binding.btnSignOut.visibility = View.GONE
-        }
-    }
-
     private fun signOut() {
         auth.signOut()
         updateUI(null)
@@ -154,5 +138,33 @@ class LoginActivity : AppCompatActivity() {
             ?.addOnFailureListener(this) { e ->
                 Log.e(TAG, "Error in beginSignIn", e)
             }
+    }
+
+    private fun updateUI(user: FirebaseUser?) {
+        if (user != null) {
+            Log.d(TAG, "User signed in: ${user.displayName} (${user.email})")
+            Toast.makeText(this, "Welcome, ${user.displayName}!", Toast.LENGTH_SHORT).show()
+
+            binding.tvName.text = user.displayName
+            binding.tvEmail.text = user.email
+            binding.btnSignIn.visibility = View.GONE
+            binding.btnSignOut.visibility = View.VISIBLE
+            binding.ivAvatar.visibility = View.VISIBLE
+
+            user.photoUrl?.let {
+                Glide.with(this)
+                    .load(it)
+                    .circleCrop()
+                    .into(binding.ivAvatar)
+            }
+        } else {
+            Log.d(TAG, "User not signed in")
+
+            binding.tvName.text = ""
+            binding.tvEmail.text = ""
+            binding.btnSignIn.visibility = View.VISIBLE
+            binding.btnSignOut.visibility = View.GONE
+            binding.ivAvatar.visibility = View.GONE
+        }
     }
 }
