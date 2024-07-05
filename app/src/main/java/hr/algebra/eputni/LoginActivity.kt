@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setServerClientId(getString(R.string.web_client_id))
-                    .setFilterByAuthorizedAccounts(true)
+                    .setFilterByAuthorizedAccounts(false)
                     .build())
             .build()
 
@@ -110,7 +110,13 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    updateUI(user)
+                    if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))){
+                        updateUI(user)
+                    } else {
+                        Log.w(TAG, "Sign-in failed: unauthorized domain")
+                        Toast.makeText(this, "Sign-in failed: unauthorized domain", Toast.LENGTH_SHORT).show()
+                        signOut()
+                    }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
