@@ -6,6 +6,18 @@
     android:id="@+id/fragments" >
 
     <fragment
+        android:id="@+id/warrantsFragment"
+        android:name="hr.algebra.eputni.fragment.WarrantsFragment"
+        android:label="Create Warrant"
+        tools:layout="@layout/fragment_warrants" />
+
+    <fragment
+        android:id="@+id/carsFragment"
+        android:name="hr.algebra.eputni.fragment.CarsFragment"
+        android:label="@string/cars"
+        tools:layout="@layout/fragment_cars" />
+
+    <fragment
         android:name="hr.algebra.eputni.fragment.ProfileFragment"
         android:id="@+id/profileFragment"
         android:label="@string/profile"
