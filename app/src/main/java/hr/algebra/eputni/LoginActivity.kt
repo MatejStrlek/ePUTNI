@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -18,6 +17,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hr.algebra.eputni.dao.FirestoreUserLogin
+import hr.algebra.eputni.dao.UserRepository
 import hr.algebra.eputni.databinding.ActivityLoginBinding
 import hr.algebra.eputni.framework.startActivity
 
@@ -28,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var oneTapClient: SignInClient? = null
     private lateinit var signInRequest: BeginSignInRequest
+    private val userRepository: UserRepository = FirestoreUserLogin()
 
     companion object {
         private const val REQ_ONE_TAP = 2
@@ -112,12 +114,8 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))){
-                        startActivity<MainActivity>(
-                            "user" to user.displayName,
-                            "email" to user.email,
-                            "photo" to user.photoUrl.toString()
-                        )
-                        finish()
+                        Log.d(TAG, "signInWithCredential:success")
+                        saveUserInFirestore(user)
                     } else {
                         Log.w(TAG, "Sign-in failed: unauthorized domain")
                         Toast.makeText(this, "Sign-in failed: unauthorized domain", Toast.LENGTH_SHORT).show()
@@ -129,6 +127,23 @@ class LoginActivity : AppCompatActivity() {
                     updateUI(null)
                 }
             }
+    }
+
+    private fun saveUserInFirestore(user: FirebaseUser) {
+        userRepository.saveUser(user,
+            {
+                startActivity<MainActivity>(
+                    "user" to user.displayName,
+                    "email" to user.email,
+                    "photo" to user.photoUrl.toString()
+                )
+                finish()
+            },
+            {
+                Log.w(TAG, "Error saving user data", it)
+                Toast.makeText(this, "Failed to save user data.", Toast.LENGTH_SHORT).show()
+                signOut()
+            })
     }
 
     private fun signOut() {
