@@ -14,8 +14,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import hr.algebra.eputni.dao.FirestoreUserLogin
 import hr.algebra.eputni.dao.UserRepository
 import hr.algebra.eputni.databinding.ActivityLoginBinding
@@ -25,7 +23,7 @@ import hr.algebra.eputni.framework.startActivity
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
-    private lateinit var auth: FirebaseAuth
+    private val auth = FirebaseAuth.getInstance()
     private var oneTapClient: SignInClient? = null
     private lateinit var signInRequest: BeginSignInRequest
     private val userRepository: UserRepository = FirestoreUserLogin()
@@ -55,7 +53,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initLogin() {
-        auth = Firebase.auth
         oneTapClient = Identity.getSignInClient(this)
         signInRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
