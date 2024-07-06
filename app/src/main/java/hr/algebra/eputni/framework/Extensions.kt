@@ -40,19 +40,3 @@ inline fun <reified T : Activity> Context.startActivity() =
             .apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
-
-inline fun <reified T : Activity> Context.startActivity(vararg extras: Pair<String, Any?>) {
-    val intent = Intent(this, T::class.java).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        extras.forEach { pair ->
-            val key = pair.first
-            when (val value = pair.second) {
-                is String -> putExtra(key, value)
-                is Int -> putExtra(key, value)
-                is Boolean -> putExtra(key, value)
-                else -> throw IllegalArgumentException("Unsupported extra type")
-            }
-        }
-    }
-    startActivity(intent)
-}

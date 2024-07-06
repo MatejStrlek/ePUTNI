@@ -3,16 +3,18 @@ package hr.algebra.eputni
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import hr.algebra.eputni.dao.FirestoreUserLogin
+import hr.algebra.eputni.dao.UserRepository
 import hr.algebra.eputni.databinding.ActivityMainBinding
 import hr.algebra.eputni.framework.startActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var auth: FirebaseAuth
+    private val userRepository: UserRepository = FirestoreUserLogin()
+    private val auth = FirebaseAuth.getInstance()
 
     companion object {
         private const val TAG = "MainActivity"
@@ -22,8 +24,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
-
         binding.btnSignOut.setOnClickListener {
             signOut()
         }
@@ -32,18 +32,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUser() {
-        val user = intent.getStringExtra("user")
-        val email = intent.getStringExtra("email")
-        val photo = intent.getStringExtra("photo")
-
-        binding.tvName.text = user
-        binding.tvEmail.text = email
-        if (photo != null) {
-            Glide.with(this)
-                .load(photo.toUri())
-                .circleCrop()
-                .into(binding.ivAvatar)
-        }
+        userRepository.getUser(
+            auth.currentUser!!.uid,
+            { user ->
+                binding.tvName.text = user.displayName
+                binding.tvEmail.text = user.email
+                if (user.photoUrl != null) {
+                    Glide.with(this)
+                        .load(user.photoUrl)
+                        .circleCrop()
+                        .into(binding.ivAvatar)
+                }
+            },
+            { e ->
+                Log.e(TAG, "Failed to get user", e)
+            }
+        )
     }
 
     private fun signOut() {

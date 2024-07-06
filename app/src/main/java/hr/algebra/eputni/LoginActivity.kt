@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
@@ -71,17 +70,12 @@ class LoginActivity : AppCompatActivity() {
             Log.d(TAG, "Sign in clicked")
             signIn()
         }
-
-        binding.btnSignOut.setOnClickListener {
-            Log.d(TAG, "Sign out clicked")
-            signOut()
-        }
     }
 
     override fun onStart() {
         super.onStart()
         val currentUser = auth.currentUser
-        updateUI(currentUser)
+        updateInfo(currentUser)
     }
 
     @Deprecated("Deprecated in Java")
@@ -124,7 +118,7 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
-                    updateUI(null)
+                    updateInfo(null)
                 }
             }
     }
@@ -132,11 +126,7 @@ class LoginActivity : AppCompatActivity() {
     private fun saveUserInFirestore(user: FirebaseUser) {
         userRepository.saveUser(user,
             {
-                startActivity<MainActivity>(
-                    "user" to user.displayName,
-                    "email" to user.email,
-                    "photo" to user.photoUrl.toString()
-                )
+                startActivity<MainActivity>()
                 finish()
             },
             {
@@ -148,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signOut() {
         auth.signOut()
-        updateUI(null)
+        updateInfo(null)
     }
 
     private fun signIn() {
@@ -167,22 +157,14 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
+    private fun updateInfo(user: FirebaseUser?) {
         if (user != null) {
             Log.d(TAG, "User signed in: ${user.displayName} (${user.email})")
             Toast.makeText(this, "Welcome, ${user.displayName}!", Toast.LENGTH_SHORT).show()
-            binding.btnSignIn.visibility = View.GONE
-            binding.btnSignOut.visibility = View.VISIBLE
-            startActivity<MainActivity>(
-                "user" to user.displayName,
-                "email" to user.email,
-                "photo" to user.photoUrl.toString()
-            )
+            startActivity<MainActivity>()
             finish()
         } else {
             Log.d(TAG, "User not signed in")
-            binding.btnSignIn.visibility = View.VISIBLE
-            binding.btnSignOut.visibility = View.GONE
         }
     }
 }
