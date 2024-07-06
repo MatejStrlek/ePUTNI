@@ -1,5 +1,4 @@
 <resources>
-    <string name="web_client_id">58660447480-9u0nu4s8t3hjckh9gdkchopf54ott5l2.apps.googleusercontent.com</string>
     <string name="app_name">ePUTNI</string>
     <string name="no_internet">No Internet!</string>
     <string name="sign_in_with_google">Sign in with Google</string>

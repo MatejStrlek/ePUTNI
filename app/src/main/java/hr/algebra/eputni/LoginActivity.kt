@@ -31,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
     companion object {
         private const val REQ_ONE_TAP = 2
         private const val TAG = "LoginActivity"
+        private const val webClientID = BuildConfig.webClientId
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setServerClientId(getString(R.string.web_client_id))
+                    .setServerClientId(webClientID)
                     .setFilterByAuthorizedAccounts(false)
                     .build())
             .build()
