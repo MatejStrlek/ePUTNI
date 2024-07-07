@@ -9,9 +9,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/carsFragment"
+        android:id="@+id/vehiclesFragment"
         android:icon="@drawable/ic_car"
-        android:title="@string/cars"
+        android:title="@string/vehicles"
         app:showAsAction="ifRoom" />
 
     <item

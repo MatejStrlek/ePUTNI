@@ -10,6 +10,15 @@
     <string name="cancel">Cancel</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile">Profil</string>
-    <string name="cars">Vozila</string>
+    <string name="vehicles">Vozila</string>
     <string name="warrants">Nalozi</string>
+    <string name="vehicle_model_example">Model vozila (npr. Mazda CX30)</string>
+    <string name="vehicle_name">Ime vozila</string>
+    <string name="license_plate_example">Registracija (npr. ZG1234ZG)</string>
+    <string name="vehicle_type">Vrsta vozila</string>
+    <string name="save_vehicle">Spremi vozilo</string>
+    <string name="select_car_type">Odaberi vrstu vozila</string>
+    <string name="vehicle_saved">Vozilo spremljeno</string>
+    <string name="not_logged_in">Niste prijavljeni</string>
+    <string name="vehicles_list">Lista vozila</string>
 </resources>

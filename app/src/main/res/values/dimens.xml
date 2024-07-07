@@ -8,4 +8,6 @@
     <dimen name="_150sp">150sp</dimen>
     <dimen name="_128dp">128dp</dimen>
     <dimen name="_24sp">24sp</dimen>
+    <dimen name="_18sp">18sp</dimen>
+    <dimen name="_100sp">100sp</dimen>
 </resources>

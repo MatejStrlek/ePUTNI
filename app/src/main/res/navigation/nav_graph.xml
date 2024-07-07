@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_warrants" />
 
     <fragment
-        android:id="@+id/carsFragment"
-        android:name="hr.algebra.eputni.fragment.CarsFragment"
-        android:label="@string/cars"
-        tools:layout="@layout/fragment_cars" />
+        android:id="@+id/vehiclesFragment"
+        android:name="hr.algebra.eputni.fragment.VehiclesFragment"
+        android:label="@string/vehicles"
+        tools:layout="@layout/fragment_vehicles" />
 
     <fragment
         android:name="hr.algebra.eputni.fragment.ProfileFragment"
