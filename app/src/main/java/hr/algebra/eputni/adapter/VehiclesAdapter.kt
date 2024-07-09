@@ -8,14 +8,17 @@ import hr.algebra.eputni.databinding.CarListItemBinding
 import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
 
-class VehiclesAdapter(private val vehicles: List<Vehicle>) :
-    RecyclerView.Adapter<VehiclesAdapter.VehicleViewHolder>(){
+class VehiclesAdapter(
+    private val vehicles: List<Vehicle>
+) :
+    RecyclerView.Adapter<VehiclesAdapter.VehicleViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): VehicleViewHolder {
         val binding = CarListItemBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false)
+            LayoutInflater.from(parent.context), parent, false
+        )
         return VehicleViewHolder(binding)
     }
 

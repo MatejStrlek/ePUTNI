@@ -34,4 +34,11 @@ class FirestoreVehicles : VehicleRepository {
             }
     }
 
+    override fun updateVehicle(
+        vehicle: Vehicle,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+
+    }
 }
