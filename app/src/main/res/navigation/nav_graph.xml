@@ -14,8 +14,18 @@
     <fragment
         android:id="@+id/vehiclesFragment"
         android:name="hr.algebra.eputni.fragment.VehiclesFragment"
-        android:label="@string/vehicles"
-        tools:layout="@layout/fragment_vehicles" />
+        tools:layout="@layout/fragment_vehicles"
+        android:label="@string/vehicles" >
+        <action
+            android:id="@+id/action_vehicleFragment_to_vehiclesListFragment"
+            app:destination="@+id/vehiclesListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vehiclesListFragment"
+        android:name="hr.algebra.eputni.fragment.VehiclesListFragment"
+        android:label="@string/vehicles_list"
+        tools:layout="@layout/fragment_vehicles_list" />
 
     <fragment
         android:name="hr.algebra.eputni.fragment.ProfileFragment"

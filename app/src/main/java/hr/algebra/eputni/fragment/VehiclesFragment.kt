@@ -10,19 +10,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import hr.algebra.eputni.R
-import hr.algebra.eputni.dao.FirestoreUserLogin
-import hr.algebra.eputni.dao.UserRepository
+import hr.algebra.eputni.dao.FirestoreVehicles
+import hr.algebra.eputni.dao.VehicleRepository
 import hr.algebra.eputni.databinding.FragmentVehiclesBinding
 import hr.algebra.eputni.enums.VehicleType
+import hr.algebra.eputni.model.Vehicle
 
 class VehiclesFragment : Fragment() {
     private var _binding: FragmentVehiclesBinding? = null
     private val binding get() = _binding!!
-
-    private val userRepository: UserRepository by lazy {
-        FirestoreUserLogin()
+    private val vehicleRepository: VehicleRepository by lazy {
+        FirestoreVehicles()
     }
 
     override fun onCreateView(
@@ -42,6 +41,10 @@ class VehiclesFragment : Fragment() {
             if (!fieldsValidated()) return@setOnClickListener
             saveVehicleData()
         }
+
+        binding.fabListCars.setOnClickListener {
+            findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+        }
     }
 
     private fun saveVehicleData() {
@@ -52,35 +55,33 @@ class VehiclesFragment : Fragment() {
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
-            userRepository.getUser(
-                currentUser.uid,
-                { user ->
-                    val carData = hashMapOf(
-                        "vehicleName" to vehicleName,
-                        "vehicleModel" to vehicleModel,
-                        "vehicleType" to vehicleType.name,
-                        "licensePlate" to licensePlate,
-                        "userId" to user.uid
-                    )
-
-                    FirebaseFirestore.getInstance().collection("vehicles")
-                        .add(carData)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(),
-                                getString(R.string.vehicle_saved), Toast.LENGTH_SHORT).show()
-                                findNavController().navigate(R.id.profileFragment)
-                        }
-                        .addOnFailureListener { error ->
-                            Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
-                        }
-                },
-                { error ->
-                    Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
-                }
+            val vehicleData = Vehicle(
+                userId = currentUser.uid,
+                vehicleName = vehicleName,
+                vehicleModel = vehicleModel,
+                vehicleType = vehicleType,
+                licensePlate = licensePlate
             )
+
+            vehicleRepository.saveVehicle(vehicleData,
+                {
+                    Toast.makeText(requireContext(), getString(R.string.vehicle_saved), Toast.LENGTH_SHORT).show()
+                    clearFields()
+                },
+                {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+                )
         } else {
             Toast.makeText(requireContext(), getString(R.string.not_logged_in), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun clearFields() {
+        binding.etVehicleName.text?.clear()
+        binding.etVehicleModel.text?.clear()
+        binding.spinnerVehicleType.setSelection(0)
+        binding.etLicensePlate.text?.clear()
     }
 
     private fun fieldsValidated(): Boolean {
