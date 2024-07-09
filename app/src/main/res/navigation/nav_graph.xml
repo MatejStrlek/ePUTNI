@@ -25,7 +25,11 @@
         android:id="@+id/vehiclesListFragment"
         android:name="hr.algebra.eputni.fragment.VehiclesListFragment"
         android:label="@string/vehicles_list"
-        tools:layout="@layout/fragment_vehicles_list" />
+        tools:layout="@layout/fragment_vehicles_list" >
+        <action
+            android:id="@+id/action_vehiclesListFragment_to_vehicleFragment"
+            app:destination="@+id/vehiclesFragment" />
+    </fragment>
 
     <fragment
         android:name="hr.algebra.eputni.fragment.ProfileFragment"

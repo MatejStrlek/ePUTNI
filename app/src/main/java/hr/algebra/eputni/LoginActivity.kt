@@ -11,6 +11,8 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -92,6 +94,24 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } catch (e: ApiException) {
                     Log.w(TAG, "Sign-in failed", e)
+                    when (e.statusCode) {
+                        CommonStatusCodes.CANCELED -> {
+                            Log.d("one tap", "One-tap dialog was closed.")
+                            // Don't re-prompt the user.
+                            Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+                        CommonStatusCodes.NETWORK_ERROR -> {
+                            Log.d("one tap", "One-tap encountered a network error.")
+                            // Try again or just ignore.
+                            Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+                        else -> {
+                            Log.d("one tap", "Couldn't get credential from result." +
+                                    " (${e.localizedMessage})")
+                            Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
+                                    " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+                    }
                 }
             } else {
                 Log.w(TAG, "Sign-in canceled or failed. resultCode: $resultCode")

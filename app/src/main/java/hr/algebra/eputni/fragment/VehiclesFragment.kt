@@ -35,6 +35,7 @@ class VehiclesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        clearFields()
         initVehicleSpinner()
 
         binding.btnSaveVehicle.setOnClickListener {
@@ -42,7 +43,7 @@ class VehiclesFragment : Fragment() {
             saveVehicleData()
         }
 
-        binding.fabListCars.setOnClickListener {
+        binding.fabListVehicles.setOnClickListener {
             findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
         }
     }
@@ -67,6 +68,7 @@ class VehiclesFragment : Fragment() {
                 {
                     Toast.makeText(requireContext(), getString(R.string.vehicle_saved), Toast.LENGTH_SHORT).show()
                     clearFields()
+                    findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
                 },
                 {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()

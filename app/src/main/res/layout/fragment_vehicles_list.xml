@@ -3,13 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/_10sp"
     tools:context=".fragment.VehiclesListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:padding="@dimen/_18sp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        />
 
-    add button for adding new vehicle in here
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddVehicle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/_18sp"
+        android:layout_marginBottom="@dimen/_100sp"
+        android:src="@drawable/ic_plus"
+        android:contentDescription="@string/vehicle_add"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

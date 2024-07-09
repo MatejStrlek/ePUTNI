@@ -3,7 +3,9 @@ package hr.algebra.eputni.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import hr.algebra.eputni.R
 import hr.algebra.eputni.databinding.CarListItemBinding
+import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
 
 class VehiclesAdapter(private val vehicles: List<Vehicle>) :
@@ -29,7 +31,15 @@ class VehiclesAdapter(private val vehicles: List<Vehicle>) :
         fun bind(vehicle: Vehicle) {
             binding.tvVehicleName.text = vehicle.vehicleName
             binding.tvVehicleModel.text = vehicle.vehicleModel
-            binding.tvVehicleType.text = vehicle.vehicleType.name
+
+            setIconOfVehicleType(vehicle.vehicleType.name)
+        }
+
+        private fun setIconOfVehicleType(vehicleType: String) {
+            when (VehicleType.valueOf(vehicleType)) {
+                VehicleType.PRIVATE -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_private)
+                VehicleType.BUSINESS -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_business)
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import hr.algebra.eputni.R
@@ -38,6 +39,10 @@ class VehiclesListFragment : Fragment() {
 
         initRecyclerView()
         fetchCars()
+
+        binding.fabAddVehicle.setOnClickListener {
+            findNavController().navigate(R.id.action_vehiclesListFragment_to_vehicleFragment)
+        }
     }
 
     private fun initRecyclerView() {

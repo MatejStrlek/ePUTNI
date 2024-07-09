@@ -9,5 +9,6 @@ data class Vehicle(
     var licensePlate: String = "",
     var userId: String = "",
 ) {
+    //for Firebase needed
     constructor() : this("", "", VehicleType.PRIVATE, "", "")
 }
