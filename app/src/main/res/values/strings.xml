@@ -24,4 +24,12 @@
     <string name="test_vehicle_name">Test naziv vozila</string>
     <string name="test_vehicle_model">Test model vozila</string>
     <string name="vehicle_add">Dodaj vozilo</string>
+    <string name="vehicle_deleted">Vozilo izbrisano</string>
+    <string name="error_deleting_vehicle">Greška kod brisanja</string>
+    <string name="unauthorized_domain">Unauthorized domain</string>
+    <string name="authentication_failed">Authentication Failed</string>
+    <string name="failed_to_save_user_data">Failed to save user data</string>
+    <string name="delete_vehicle">Obrisati vozilo?</string>
+    <string name="delete_confirmation_message">Jeste li sigurni?</string>
+    <string name="no_vehicles">Nema upisanih vozila!</string>
 </resources>

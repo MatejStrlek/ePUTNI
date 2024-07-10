@@ -97,12 +97,10 @@ class LoginActivity : AppCompatActivity() {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
                             Log.d("one tap", "One-tap dialog was closed.")
-                            // Don't re-prompt the user.
                             Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
                             Log.d("one tap", "One-tap encountered a network error.")
-                            // Try again or just ignore.
                             Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
                         }
                         else -> {
@@ -130,12 +128,14 @@ class LoginActivity : AppCompatActivity() {
                         saveUserInFirestore(user)
                     } else {
                         Log.w(TAG, "Sign-in failed: unauthorized domain")
-                        Toast.makeText(this, "Sign-in failed: unauthorized domain", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this,
+                            getString(R.string.unauthorized_domain), Toast.LENGTH_SHORT).show()
                         signOut()
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,
+                        getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
                     updateInfo(null)
                 }
             }
@@ -149,7 +149,8 @@ class LoginActivity : AppCompatActivity() {
             },
             {
                 Log.w(TAG, "Error saving user data", it)
-                Toast.makeText(this, "Failed to save user data.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    getString(R.string.failed_to_save_user_data), Toast.LENGTH_SHORT).show()
                 signOut()
             })
     }
@@ -178,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateInfo(user: FirebaseUser?) {
         if (user != null) {
             Log.d(TAG, "User signed in: ${user.displayName} (${user.email})")
-            Toast.makeText(this, "Welcome, ${user.displayName}!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Pozdrav, ${user.displayName}!", Toast.LENGTH_SHORT).show()
             startActivity<MainActivity>()
             finish()
         } else {

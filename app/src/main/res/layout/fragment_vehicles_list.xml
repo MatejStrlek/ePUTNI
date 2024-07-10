@@ -15,6 +15,17 @@
         android:scrollbars="vertical"
         />
 
+    <TextView
+        android:id="@+id/tvEmptyListMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_vehicles"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textSize="@dimen/_18sp"
+        android:textColor="@android:color/darker_gray"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddVehicle"
         android:layout_width="wrap_content"
@@ -23,6 +34,7 @@
         android:layout_marginEnd="@dimen/_18sp"
         android:layout_marginBottom="@dimen/_100sp"
         android:src="@drawable/ic_plus"
+        style="@style/CustomFloatingActionButton"
         android:contentDescription="@string/vehicle_add"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

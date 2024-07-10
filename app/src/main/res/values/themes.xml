@@ -7,4 +7,10 @@
     </style>
 
     <style name="Theme.EPUTNI" parent="Base.Theme.EPUTNI" />
+
+    <style name="CustomFloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/estudent_red</item>
+        <item name="rippleColor">@color/estudent_red</item>
+        <item name="elevation">6dp</item>
+    </style>
 </resources>

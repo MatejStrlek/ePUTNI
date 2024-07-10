@@ -1,5 +1,6 @@
 package hr.algebra.eputni.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +10,10 @@ import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
 
 class VehiclesAdapter(
-    private val vehicles: List<Vehicle>
+    private val context: Context,
+    private val vehicles: MutableList<Vehicle>,
+    private val onVehicleClick: (Vehicle) -> Unit,
+    private val onVehicleLongClick: (Vehicle, Int) -> Unit
 ) :
     RecyclerView.Adapter<VehiclesAdapter.VehicleViewHolder>() {
     override fun onCreateViewHolder(
@@ -23,7 +27,18 @@ class VehiclesAdapter(
     }
 
     override fun onBindViewHolder(holder: VehicleViewHolder, position: Int) {
-        holder.bind(vehicles[position])
+        val vehicle = vehicles[position]
+
+        holder.itemView.setOnLongClickListener {
+            onVehicleLongClick(vehicle, position)
+            true
+        }
+
+        holder.itemView.setOnClickListener {
+            onVehicleClick(vehicle)
+        }
+
+        holder.bind(vehicle)
     }
 
     override fun getItemCount(): Int = vehicles.size
@@ -40,8 +55,8 @@ class VehiclesAdapter(
 
         private fun setIconOfVehicleType(vehicleType: String) {
             when (VehicleType.valueOf(vehicleType)) {
-                VehicleType.PRIVATE -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_private)
-                VehicleType.BUSINESS -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_business)
+                VehicleType.PRIVATE -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_private_car)
+                VehicleType.BUSINESS -> binding.ivVehicleTypeIcon.setImageResource(R.drawable.ic_business_car)
             }
         }
     }

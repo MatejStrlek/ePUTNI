@@ -16,6 +16,7 @@ import hr.algebra.eputni.dao.FirestoreVehicles
 import hr.algebra.eputni.dao.VehicleRepository
 import hr.algebra.eputni.databinding.FragmentVehiclesListBinding
 import hr.algebra.eputni.model.Vehicle
+import hr.algebra.eputni.util.DialogUtils
 
 class VehiclesListFragment : Fragment() {
     private var _binding: FragmentVehiclesListBinding? = null
@@ -46,9 +47,39 @@ class VehiclesListFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        adapter = VehiclesAdapter(vehicles)
+        adapter = VehiclesAdapter(requireContext(), vehicles,
+            onVehicleClick = { vehicle ->
+                Toast.makeText(requireContext(), "Vehicle clicked: ${vehicle.vehicleName}", Toast.LENGTH_SHORT).show()
+                /*val action = VehiclesListFragmentDirections.actionVehiclesListFragmentToCreateCarFragment(vehicle)
+                findNavController().navigate(action)*/
+            },
+            onVehicleLongClick = { vehicle, position ->
+                DialogUtils.showDeleteConfirmationDialog(
+                    context = requireContext(),
+                    title = getString(R.string.delete_vehicle),
+                    message = getString(R.string.delete_confirmation_message)
+                ) {
+                    deleteVehicle(vehicle, position)
+                }
+            })
+
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
+    }
+
+    private fun deleteVehicle(vehicle: Vehicle, position: Int) {
+        vehicleRepository.deleteVehicle(vehicle,
+            onSuccess = {
+                vehicles.removeAt(position)
+                adapter.notifyItemRemoved(position)
+                Toast.makeText(requireContext(),
+                    getString(R.string.vehicle_deleted), Toast.LENGTH_SHORT).show()
+                toggleEmptyListMessage(vehicles.isEmpty())
+            },
+            onFailure = {
+                Toast.makeText(requireContext(),
+                    getString(R.string.error_deleting_vehicle), Toast.LENGTH_SHORT).show()
+            })
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -60,6 +91,7 @@ class VehiclesListFragment : Fragment() {
                     vehicles.clear()
                     vehicles.addAll(it)
                     adapter.notifyDataSetChanged()
+                    toggleEmptyListMessage(vehicles.isEmpty())
                 },
                 {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -68,6 +100,10 @@ class VehiclesListFragment : Fragment() {
         else {
             Toast.makeText(requireContext(), getString(R.string.not_logged_in), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun toggleEmptyListMessage(isEmpty: Boolean) {
+        binding.tvEmptyListMessage.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {
