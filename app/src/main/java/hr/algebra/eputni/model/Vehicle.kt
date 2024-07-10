@@ -3,6 +3,7 @@ package hr.algebra.eputni.model
 import hr.algebra.eputni.enums.VehicleType
 
 data class Vehicle(
+    var id: String = "",
     var vehicleName: String = "",
     var vehicleModel: String = "",
     var vehicleType: VehicleType = VehicleType.PRIVATE,
@@ -10,5 +11,5 @@ data class Vehicle(
     var userId: String = "",
 ) {
     //for Firebase needed
-    constructor() : this("", "", VehicleType.PRIVATE, "", "")
+    constructor() : this("", "", "", VehicleType.PRIVATE, "", "")
 }
