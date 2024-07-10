@@ -50,7 +50,7 @@ class VehiclesAdapter(
             binding.tvVehicleName.text = vehicle.vehicleName
             binding.tvVehicleModel.text = vehicle.vehicleModel
 
-            setIconOfVehicleType(vehicle.vehicleType.name)
+            setIconOfVehicleType(vehicle.vehicleType!!.name)
         }
 
         private fun setIconOfVehicleType(vehicleType: String) {

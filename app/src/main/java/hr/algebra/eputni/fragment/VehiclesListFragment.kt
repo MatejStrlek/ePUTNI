@@ -49,9 +49,10 @@ class VehiclesListFragment : Fragment() {
     private fun initRecyclerView() {
         adapter = VehiclesAdapter(requireContext(), vehicles,
             onVehicleClick = { vehicle ->
-                Toast.makeText(requireContext(), "Vehicle clicked: ${vehicle.vehicleName}", Toast.LENGTH_SHORT).show()
-                /*val action = VehiclesListFragmentDirections.actionVehiclesListFragmentToCreateCarFragment(vehicle)
-                findNavController().navigate(action)*/
+                val bundle = Bundle().apply {
+                    putParcelable(getString(R.string.vehicle), vehicle)
+                }
+                findNavController().navigate(R.id.action_vehiclesListFragment_to_vehicleFragment, bundle)
             },
             onVehicleLongClick = { vehicle, position ->
                 DialogUtils.showDeleteConfirmationDialog(

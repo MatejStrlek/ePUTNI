@@ -49,7 +49,7 @@ class FirestoreVehicles : VehicleRepository {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection(VEHICLES).document(vehicle.id)
+        db.collection(VEHICLES).document(vehicle.id!!)
             .set(vehicle)
             .addOnSuccessListener {
                 onSuccess()
@@ -64,7 +64,7 @@ class FirestoreVehicles : VehicleRepository {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection(VEHICLES).document(vehicle.id)
+        db.collection(VEHICLES).document(vehicle.id!!)
             .delete()
             .addOnSuccessListener {
                 onSuccess()

@@ -17,9 +17,11 @@ import hr.algebra.eputni.databinding.FragmentVehiclesBinding
 import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
 
+@Suppress("DEPRECATION")
 class VehiclesFragment : Fragment() {
     private var _binding: FragmentVehiclesBinding? = null
     private val binding get() = _binding!!
+    private var currentVehicle: Vehicle? = null
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -38,14 +40,63 @@ class VehiclesFragment : Fragment() {
         clearFields()
         initVehicleSpinner()
 
-        binding.btnSaveVehicle.setOnClickListener {
-            if (!fieldsValidated()) return@setOnClickListener
-            saveVehicleData()
+        val vehicle: Vehicle? = arguments?.getParcelable(getString(R.string.vehicle))
+        currentVehicle = vehicle
+        if (vehicle != null) {
+            populateFields(vehicle)
+            binding.btnSaveVehicle.text = getString(R.string.update_vehicle)
+        }
+        else {
+            binding.btnSaveVehicle.text = getString(R.string.save_vehicle)
         }
 
         binding.fabListVehicles.setOnClickListener {
             findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
         }
+
+        binding.btnSaveVehicle.setOnClickListener {
+            if (!fieldsValidated()) return@setOnClickListener
+
+            if (vehicle == null) {
+                saveVehicleData()
+            }
+            else {
+                updateVehicleData(currentVehicle!!)
+            }
+
+        }
+    }
+
+    private fun updateVehicleData(currentVehicle: Vehicle) {
+        val vehicleName = binding.etVehicleName.text.toString()
+        val vehicleModel = binding.etVehicleModel.text.toString()
+        val vehicleType = VehicleType.entries[binding.spinnerVehicleType.selectedItemPosition]
+        val licensePlate = binding.etLicensePlate.text.toString()
+
+        val updatedVehicle = currentVehicle.copy(
+            vehicleName = vehicleName,
+            vehicleModel = vehicleModel,
+            vehicleType = vehicleType,
+            licensePlate = licensePlate
+        )
+
+        vehicleRepository.updateVehicle(updatedVehicle,
+            onSuccess = {
+                Toast.makeText(requireContext(), getString(R.string.vehicle_updated), Toast.LENGTH_SHORT).show()
+                clearFields()
+                findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+            },
+            onFailure = {
+                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    private fun populateFields(vehicle: Vehicle) {
+        binding.etVehicleName.setText(vehicle.vehicleName)
+        binding.etVehicleModel.setText(vehicle.vehicleModel)
+        binding.spinnerVehicleType.setSelection(VehicleType.entries.indexOf(vehicle.vehicleType))
+        binding.etLicensePlate.setText(vehicle.licensePlate)
     }
 
     private fun saveVehicleData() {

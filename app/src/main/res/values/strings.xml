@@ -32,4 +32,7 @@
     <string name="delete_vehicle">Obrisati vozilo?</string>
     <string name="delete_confirmation_message">Jeste li sigurni?</string>
     <string name="no_vehicles">Nema upisanih vozila!</string>
+    <string name="vehicle">vehicle</string>
+    <string name="vehicle_updated">Vozilo ažurirano</string>
+    <string name="update_vehicle">Ažuriraj vozilo</string>
 </resources>
