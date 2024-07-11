@@ -63,7 +63,6 @@ class VehiclesFragment : Fragment() {
             else {
                 updateVehicleData(currentVehicle!!)
             }
-
         }
     }
 
@@ -141,11 +140,11 @@ class VehiclesFragment : Fragment() {
         var isValid = true
 
         if (binding.etVehicleName.text.isNullOrBlank()) {
-            binding.etVehicleName.error = "Vehicle name is required"
+            binding.etVehicleName.error = getString(R.string.mondatory_vehicle_name)
             isValid = false
         }
         if (binding.etVehicleModel.text.isNullOrBlank()) {
-            binding.etVehicleModel.error = "Vehicle model is required"
+            binding.etVehicleModel.error = getString(R.string.mondatory_vehicle_model)
             isValid = false
         }
 
@@ -155,7 +154,7 @@ class VehiclesFragment : Fragment() {
         }
 
         if (binding.etLicensePlate.text.isNullOrBlank()) {
-            binding.etLicensePlate.error = "License plate is required"
+            binding.etLicensePlate.error = getString(R.string.mondatory_license_plate)
             isValid = false
         }
 
