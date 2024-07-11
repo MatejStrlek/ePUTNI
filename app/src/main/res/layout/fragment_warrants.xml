@@ -1,15 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="@dimen/_16sp"
     tools:context=".fragment.WarrantsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:text="@string/select_car"
+        android:layout_marginBottom="@dimen/_24sp"
+        android:textSize="@dimen/_16sp" />
 
-</FrameLayout>
+    <Spinner
+        android:id="@+id/spinnerSelectCar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:prompt="@string/select_car" />
+
+    <EditText
+        android:id="@+id/etStartKilometers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/count_kilometers_onStart"
+        android:inputType="number"
+        android:importantForAutofill="no" />
+
+    <RadioGroup
+        android:id="@+id/rbOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbEnterCities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_start_city" />
+
+        <LinearLayout
+            android:id="@+id/llCities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            tools:visibility="visible">
+
+            <EditText
+                android:id="@+id/etStartCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/start_city"
+                android:inputType="text"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/etEndCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/destination"
+                android:inputType="text"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+
+        <RadioButton
+            android:id="@+id/rbMeasureDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/measure_distance_with_mobile" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnStartTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_trip" />
+
+    <Button
+        android:id="@+id/btnEndTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/end_trip"
+        android:visibility="gone" />
+
+</LinearLayout>
