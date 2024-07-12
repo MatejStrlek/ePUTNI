@@ -39,9 +39,6 @@ class WarrantsFragment : Fragment() {
         binding.btnStartTrip.setOnClickListener {
             if (!fieldsValidated()) return@setOnClickListener
             startTrip()
-            disableStartFields(false)
-            binding.btnEndTrip.visibility = View.VISIBLE
-            Toast.makeText(context, getString(R.string.trip_started), Toast.LENGTH_SHORT).show()
         }
         binding.btnEndTrip.setOnClickListener {
             endTrip()
@@ -50,18 +47,6 @@ class WarrantsFragment : Fragment() {
             binding.llCities.visibility = if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
         }
         fetchVehicles()
-    }
-
-    private fun disableStartFields(enabled: Boolean) {
-        binding.etStartKilometers.isEnabled = enabled
-        binding.spinnerSelectCar.isEnabled = enabled
-        binding.rbOptions.isEnabled = enabled
-        binding.rbEnterCities.isEnabled = enabled
-        binding.rbEnterCities.isEnabled = enabled
-        binding.etStartCity.isEnabled = enabled
-        binding.etEndCity.isEnabled = enabled
-
-        binding.btnStartTrip.isEnabled = enabled
     }
 
     private fun fieldsValidated(): Boolean {
@@ -92,11 +77,41 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun startTrip() {
+        disableStartFields(false)
+        binding.btnEndTrip.visibility = View.VISIBLE
+        Toast.makeText(context, getString(R.string.trip_started), Toast.LENGTH_SHORT).show()
 
+        selectedVehicle = vehicleList[binding.spinnerSelectCar.selectedItemPosition]
+        val startKilometers = binding.etStartKilometers.text.toString().toInt()
+
+        if (binding.rbEnterCities.isChecked) {
+            val startCity = binding.etStartCity.text.toString()
+            val endCity = binding.etEndCity.text.toString()
+        }
+        else {
+            isMeasuringDistance = true
+            startMeasuringDistance()
+        }
+    }
+
+    private fun startMeasuringDistance() {
+        TODO("Not yet implemented")
     }
 
     private fun endTrip() {
 
+    }
+
+    private fun disableStartFields(enabled: Boolean) {
+        binding.etStartKilometers.isEnabled = enabled
+        binding.spinnerSelectCar.isEnabled = enabled
+        binding.rbOptions.isEnabled = enabled
+        binding.rbEnterCities.isEnabled = enabled
+        binding.rbEnterCities.isEnabled = enabled
+        binding.etStartCity.isEnabled = enabled
+        binding.etEndCity.isEnabled = enabled
+
+        binding.btnStartTrip.isEnabled = enabled
     }
 
     private fun fetchVehicles() {

@@ -6,10 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import hr.algebra.eputni.LoginActivity
+import hr.algebra.eputni.MainActivity
+import hr.algebra.eputni.R
 import hr.algebra.eputni.dao.FirestoreUserLogin
 import hr.algebra.eputni.dao.UserRepository
 import hr.algebra.eputni.databinding.FragmentProfileBinding
@@ -39,12 +43,35 @@ class ProfileFragment : Fragment() {
             signOut()
         }
 
+        binding.etRole.addTextChangedListener {
+            validateRoleField()
+        }
+
         initUser()
     }
 
+    override fun onPause() {
+        super.onPause()
+        updateUserRole(binding.etRole.text.toString())
+    }
+
+    private fun updateUserRole(role: String) {
+        val userId = auth.currentUser?.uid
+        if (userId != null && role.isNotEmpty()) {
+            userRepository.updateUserRole(userId, role,
+                onSuccess = {
+                    Toast.makeText(context, getString(R.string.role_saved), Toast.LENGTH_SHORT).show()
+                },
+                onFailure = {
+                    Toast.makeText(context, getString(R.string.role_failed_save), Toast.LENGTH_SHORT).show()
+                })
+        }
+    }
+
     private fun initUser() {
+        val userId = auth.currentUser!!.uid
         userRepository.getUser(
-            auth.currentUser!!.uid,
+            userId,
             { user ->
                 binding.tvName.text = user.displayName
                 binding.tvEmail.text = user.email
@@ -54,11 +81,32 @@ class ProfileFragment : Fragment() {
                         .circleCrop()
                         .into(binding.ivAvatar)
                 }
+                fetchUserRole(userId)
             },
             { e ->
                 Log.e(TAG, "Failed to get user", e)
             }
         )
+    }
+
+    private fun fetchUserRole(userId: String) {
+        userRepository.getUserRole(
+            userId,
+            { role ->
+                binding.etRole.setText(role)
+                validateRoleField()
+            },
+            { e ->
+                Log.e(TAG, "Failed to get user role", e)
+            }
+        )
+    }
+
+    private fun validateRoleField() {
+        val role = binding.etRole.text.toString()
+        val isValid = role.isNotEmpty()
+
+        (activity as? MainActivity)?.setNavigationEnabled(isValid)
     }
 
     private fun signOut() {

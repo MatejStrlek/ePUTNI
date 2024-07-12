@@ -125,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))){
                         Log.d(TAG, "signInWithCredential:success")
-                        saveUserInFirestore(user)
+                        checkAndSaveUser(user)
                     } else {
                         Log.w(TAG, "Sign-in failed: unauthorized domain")
                         Toast.makeText(this,
@@ -139,6 +139,25 @@ class LoginActivity : AppCompatActivity() {
                     updateInfo(null)
                 }
             }
+    }
+
+    private fun checkAndSaveUser(user: FirebaseUser) {
+        userRepository.userExists(user.email!!,
+            { exists ->
+                if (exists) {
+                    Log.d(TAG, "User exists: ${user.displayName} (${user.email})")
+                    startActivity<MainActivity>()
+                    finish()
+                } else {
+                    saveUserInFirestore(user)
+                }
+            },
+            {
+                Log.w(TAG, "Error checking user data", it)
+                Toast.makeText(this,
+                    getString(R.string.failed_to_check_user_data), Toast.LENGTH_SHORT).show()
+                signOut()
+            })
     }
 
     private fun saveUserInFirestore(user: FirebaseUser) {

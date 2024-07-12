@@ -54,4 +54,10 @@
     <string name="scan_receipt">Skeniraj račun</string>
     <string name="upload_invoice">Učitaj račun</string>
     <string name="trip_started">Put pokrenut</string>
+    <string name="enter_role">Unesi poziciju u Udruzi</string>
+    <string name="role">Pozicija</string>
+    <string name="role_required">Obavezno upisati poziciju</string>
+    <string name="role_saved">Pozicija spremljena</string>
+    <string name="role_failed_save">Neuspješno spremanje pozicije</string>
+    <string name="failed_to_check_user_data">Failed to check user data</string>
 </resources>

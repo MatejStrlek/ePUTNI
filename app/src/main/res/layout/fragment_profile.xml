@@ -14,7 +14,7 @@
         tools:src="@tools:sample/avatars"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/_50sp"
-        />
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/tvName"
@@ -37,6 +37,26 @@
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/_50sp"
         />
+
+    <TextView
+        android:id="@+id/tvRoleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_role"
+        android:textSize="@dimen/_16sp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_16sp"
+        />
+
+    <EditText
+        android:id="@+id/etRole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/role"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_50sp"
+        android:inputType="text"
+        android:importantForAutofill="no" />
 
     <Button
         android:id="@+id/btnSignOut"
