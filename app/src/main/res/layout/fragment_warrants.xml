@@ -4,21 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/_16sp"
+    android:padding="@dimen/_10sp"
     tools:context=".fragment.WarrantsFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sp"
         android:text="@string/select_car"
-        android:layout_marginBottom="@dimen/_24sp"
         android:textSize="@dimen/_16sp" />
 
     <Spinner
         android:id="@+id/spinnerSelectCar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/_10sp"
         android:prompt="@string/select_car" />
 
     <EditText
@@ -26,8 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/count_kilometers_onStart"
-        android:inputType="number"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        android:inputType="number" />
 
     <RadioGroup
         android:id="@+id/rbOptions"
@@ -45,9 +45,9 @@
             android:id="@+id/llCities"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:visibility="gone"
-            android:layout_marginTop="8dp"
             tools:visibility="visible">
 
             <EditText
@@ -55,16 +55,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/start_city"
-                android:inputType="text"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/etEndCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/destination"
-                android:inputType="text"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                android:inputType="text" />
         </LinearLayout>
 
         <RadioButton
@@ -78,7 +78,49 @@
         android:id="@+id/btnStartTrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sp"
         android:text="@string/start_trip" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sp"
+        android:text="@string/trip_description"
+        android:textSize="@dimen/_16sp" />
+
+    <EditText
+        android:id="@+id/etTripDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:minLines="2" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnScanReceipt"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_4sp"
+            android:layout_weight="1"
+            android:text="@string/scan_receipt" />
+
+        <Button
+            android:id="@+id/btnUploadInvoice"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sp"
+            android:layout_weight="1"
+            android:text="@string/upload_invoice" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnEndTrip"
