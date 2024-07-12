@@ -24,6 +24,8 @@ class ProfileFragment : Fragment() {
     private val userRepository: UserRepository = FirestoreUserLogin()
     private val auth = FirebaseAuth.getInstance()
 
+    private var originalRole: String? = null
+
     companion object {
         private const val TAG = "ProfileFragment"
     }
@@ -52,7 +54,10 @@ class ProfileFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        updateUserRole(binding.etRole.text.toString())
+        val currentRole = binding.etRole.text.toString()
+        if (currentRole != originalRole) {
+            updateUserRole(currentRole)
+        }
     }
 
     private fun updateUserRole(role: String) {
@@ -61,6 +66,7 @@ class ProfileFragment : Fragment() {
             userRepository.updateUserRole(userId, role,
                 onSuccess = {
                     Toast.makeText(context, getString(R.string.role_saved), Toast.LENGTH_SHORT).show()
+                    originalRole = role
                 },
                 onFailure = {
                     Toast.makeText(context, getString(R.string.role_failed_save), Toast.LENGTH_SHORT).show()
@@ -93,6 +99,7 @@ class ProfileFragment : Fragment() {
         userRepository.getUserRole(
             userId,
             { role ->
+                originalRole = role
                 binding.etRole.setText(role)
                 validateRoleField()
             },
