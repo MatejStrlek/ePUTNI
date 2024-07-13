@@ -157,14 +157,13 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun endTrip() {
-        val endKilometers = if (isMeasuringDistance) {
-            1
-        } else {
-            0
-        }
+        if (!validateDescription()) return
+
+        val endKilometers = if (isMeasuringDistance) 1 else null
+        val description = binding.etTripDescription.text.toString()
 
         activeWarrant?.let { warrant ->
-            warrantRepository.endTrip(warrant, endKilometers,
+            warrantRepository.endTrip(warrant, endKilometers, description,
                 onSuccess = {
                     Toast.makeText(context, getString(R.string.trip_ended), Toast.LENGTH_SHORT)
                         .show()
@@ -180,6 +179,16 @@ class WarrantsFragment : Fragment() {
         clearFields()
     }
 
+    private fun validateDescription(): Boolean {
+        if (binding.etTripDescription.text.isNullOrEmpty()) {
+            binding.etTripDescription.error = getString(R.string.mondatory_description)
+            Toast.makeText(context, getString(R.string.mondatory_description), Toast.LENGTH_SHORT)
+                .show()
+            return false
+        }
+        return true
+    }
+
     private fun clearFields() {
         binding.etStartKilometers.text?.clear()
         binding.etStartCity.text?.clear()
@@ -187,6 +196,7 @@ class WarrantsFragment : Fragment() {
         binding.spinnerSelectCar.setSelection(0)
         binding.rbOptions.clearCheck()
         binding.llCities.visibility = View.GONE
+        binding.etTripDescription.text?.clear()
     }
 
     private fun Boolean.disableStartFields() {

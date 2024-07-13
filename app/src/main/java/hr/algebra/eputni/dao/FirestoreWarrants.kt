@@ -23,12 +23,14 @@ class FirestoreWarrants: WarrantRepository {
     override fun endTrip(
         warrant: Warrant,
         endKilometers: Int?,
+        description: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val updateData = mutableMapOf<String, Any>(
             "finished" to true,
-            "endTime" to System.currentTimeMillis()
+            "endTime" to System.currentTimeMillis(),
+            "description" to description
         )
 
         if (endKilometers != null) {
