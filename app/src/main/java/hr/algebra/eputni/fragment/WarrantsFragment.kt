@@ -77,7 +77,7 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun startTrip() {
-        disableStartFields(false)
+        true.disableStartFields()
         binding.btnEndTrip.visibility = View.VISIBLE
         Toast.makeText(context, getString(R.string.trip_started), Toast.LENGTH_SHORT).show()
 
@@ -95,23 +95,23 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun startMeasuringDistance() {
-        TODO("Not yet implemented")
+
     }
 
     private fun endTrip() {
 
     }
 
-    private fun disableStartFields(enabled: Boolean) {
-        binding.etStartKilometers.isEnabled = enabled
-        binding.spinnerSelectCar.isEnabled = enabled
-        binding.rbOptions.isEnabled = enabled
-        binding.rbEnterCities.isEnabled = enabled
-        binding.rbEnterCities.isEnabled = enabled
-        binding.etStartCity.isEnabled = enabled
-        binding.etEndCity.isEnabled = enabled
+    private fun Boolean.disableStartFields() {
+        binding.etStartKilometers.isEnabled = !this
+        binding.spinnerSelectCar.isEnabled = !this
+        binding.rbOptions.isEnabled = !this
+        binding.rbEnterCities.isEnabled = !this
+        binding.rbEnterCities.isEnabled = !this
+        binding.etStartCity.isEnabled = !this
+        binding.etEndCity.isEnabled = !this
 
-        binding.btnStartTrip.isEnabled = enabled
+        binding.btnStartTrip.isEnabled = this
     }
 
     private fun fetchVehicles() {

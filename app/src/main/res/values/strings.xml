@@ -45,7 +45,6 @@
     <string name="end_trip">Završi put</string>
     <string name="mondatory_vehicle_name">Ime vozila je obavezno</string>
     <string name="mondatory_vehicle_model">Model vozila je obavezan</string>
-    <string name="mondatory_license_plate">Registracijska je obavezna</string>
     <string name="mondatory_start_km">Stanje brojila obavezno</string>
     <string name="select_option">Odaberi opciju za put</string>
     <string name="mondatory_start_city">Obavezna početna lokacija</string>
@@ -60,4 +59,5 @@
     <string name="role_saved">Pozicija spremljena</string>
     <string name="role_failed_save">Neuspješno spremanje pozicije</string>
     <string name="failed_to_check_user_data">Failed to check user data</string>
+    <string name="invalid_license_plate">Neispravna registracija</string>
 </resources>

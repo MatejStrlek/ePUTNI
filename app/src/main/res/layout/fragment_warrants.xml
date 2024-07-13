@@ -127,7 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/estudent_red"
-        android:textColor="@color/light_gray"
+        android:textColor="@color/white"
         android:text="@string/end_trip"
         android:visibility="gone" />
 

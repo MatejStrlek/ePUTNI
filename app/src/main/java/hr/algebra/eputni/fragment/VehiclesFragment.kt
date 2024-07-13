@@ -26,6 +26,8 @@ class VehiclesFragment : Fragment() {
         FirestoreVehicles()
     }
 
+    private val licensePlatePattern: Regex = Regex("^[A-Za-z]{2}[A-Za-z0-9]{3,4}[A-Za-z]{1,2}$")
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -153,8 +155,8 @@ class VehiclesFragment : Fragment() {
             isValid = false
         }
 
-        if (binding.etLicensePlate.text.isNullOrBlank()) {
-            binding.etLicensePlate.error = getString(R.string.mondatory_license_plate)
+        if (!licensePlatePattern.matches(binding.etLicensePlate.text.toString())) {
+            binding.etLicensePlate.error = getString(R.string.invalid_license_plate)
             isValid = false
         }
 
