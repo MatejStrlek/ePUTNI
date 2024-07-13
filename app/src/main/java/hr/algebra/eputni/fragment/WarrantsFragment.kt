@@ -1,5 +1,6 @@
 package hr.algebra.eputni.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,9 @@ import hr.algebra.eputni.databinding.FragmentWarrantsBinding
 import hr.algebra.eputni.enums.TripType
 import hr.algebra.eputni.model.Vehicle
 import hr.algebra.eputni.model.Warrant
+import hr.algebra.eputni.util.FileUtils
 
+@Suppress("DEPRECATION")
 class WarrantsFragment : Fragment() {
     private var _binding: FragmentWarrantsBinding? = null
     private val binding get() = _binding!!
@@ -25,6 +28,7 @@ class WarrantsFragment : Fragment() {
     private var vehicleList = listOf<Vehicle>()
     private var isMeasuringDistance = false
     private var activeWarrant: Warrant? = null
+    private lateinit var fileUtils: FileUtils
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -43,10 +47,12 @@ class WarrantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fileUtils = FileUtils(this, warrantRepository, getString(R.string.select_file))
+
         checkActiveWarrant()
 
         binding.btnStartTrip.setOnClickListener {
-            if (!fieldsValidated()) return@setOnClickListener
+            if (!fieldsValidationForTripStart()) return@setOnClickListener
             startTrip()
         }
         binding.btnEndTrip.setOnClickListener {
@@ -56,10 +62,23 @@ class WarrantsFragment : Fragment() {
             binding.llCities.visibility =
                 if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
         }
+
+        binding.btnScanReceipt.setOnClickListener {
+        }
+        binding.btnUploadInvoice.setOnClickListener {
+            fileUtils.selectPdfFile()
+        }
+
         fetchVehicles()
     }
 
-    private fun fieldsValidated(): Boolean {
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        fileUtils.handleActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun fieldsValidationForTripStart(): Boolean {
         var isValid = true
 
         if (binding.etStartKilometers.text.isNullOrEmpty()) {
@@ -115,7 +134,7 @@ class WarrantsFragment : Fragment() {
 
     private fun startTrip() {
         true.disableStartFields()
-        binding.btnEndTrip.visibility = View.VISIBLE
+        toggleVisibleSecondPart(true)
         Toast.makeText(context, getString(R.string.trip_started), Toast.LENGTH_SHORT).show()
 
         val selectedVehicleId = vehicleList[binding.spinnerSelectCar.selectedItemPosition].id
@@ -153,12 +172,13 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun startMeasuringDistance() {
-
+        //todo: implement measuring distance
     }
 
     private fun endTrip() {
         if (!validateDescription()) return
 
+        //need to change when i add measuring distance
         val endKilometers = if (isMeasuringDistance) 1 else null
         val description = binding.etTripDescription.text.toString()
 
@@ -177,6 +197,14 @@ class WarrantsFragment : Fragment() {
         }
 
         clearFields()
+        toggleVisibleSecondPart(false)
+    }
+
+    private fun toggleVisibleSecondPart(isVisible: Boolean) {
+        binding.tvTripDescription.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.etTripDescription.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.llBillsButtons.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.btnEndTrip.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun validateDescription(): Boolean {

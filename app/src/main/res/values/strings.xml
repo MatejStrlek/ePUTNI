@@ -62,4 +62,6 @@
     <string name="invalid_license_plate">Neispravna registracija</string>
     <string name="trip_ended">Put završen</string>
     <string name="mondatory_description">Obavezno upisati opis puta</string>
+    <string name="select_file">Odaberi datoteku</string>
+    <string name="gg">gg</string>
 </resources>

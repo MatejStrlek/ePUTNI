@@ -16,7 +16,9 @@ data class Warrant (
     var endTime: Long? = null,
     var finished: Boolean = false,
     var tripType: TripType = TripType.CITY_BASED,
-    var description: String? = null
+    var description: String? = null,
+    var checkedByFinanceTeam: Boolean = false,
+    val files: List<String> = emptyList()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -30,12 +32,15 @@ data class Warrant (
         parcel.readValue(Long::class.java.classLoader) as? Long,
         parcel.readByte() != 0.toByte(),
         TripType.valueOf(parcel.readString() ?: TripType.CITY_BASED.name),
-        parcel.readString()
+        parcel.readString(),
+        parcel.readByte() != 0.toByte(),
+        emptyList()
     )
 
     //for Firebase needed
     constructor() : this("", "", "", 0, 0, "",
-        "", System.currentTimeMillis(), null, false, TripType.CITY_BASED, "")
+        "", System.currentTimeMillis(),
+        null, false, TripType.CITY_BASED, "", false, emptyList())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
@@ -50,6 +55,8 @@ data class Warrant (
         parcel.writeByte(if (finished) 1 else 0)
         parcel.writeString(tripType.name)
         parcel.writeString(description)
+        parcel.writeByte(if (checkedByFinanceTeam) 1 else 0)
+        parcel.writeStringList(files)
     }
 
     override fun describeContents(): Int {

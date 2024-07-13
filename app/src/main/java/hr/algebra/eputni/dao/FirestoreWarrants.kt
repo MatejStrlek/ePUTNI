@@ -1,5 +1,6 @@
 package hr.algebra.eputni.dao
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import hr.algebra.eputni.model.Warrant
 
@@ -63,6 +64,22 @@ class FirestoreWarrants: WarrantRepository {
                 } else {
                     onSuccess(null)
                 }
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    override fun linkFilesToWarrant(
+        warrantId: String,
+        filesUrl: List<String>,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(WARRANTS).document(warrantId)
+            .update("files", FieldValue.arrayUnion(*filesUrl.toTypedArray()))
+            .addOnSuccessListener {
+                onSuccess()
             }
             .addOnFailureListener {
                 onFailure(it)

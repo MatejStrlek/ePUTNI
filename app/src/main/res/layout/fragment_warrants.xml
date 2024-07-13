@@ -82,10 +82,12 @@
         android:text="@string/start_trip" />
 
     <TextView
+        android:id="@+id/tvTripDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sp"
         android:text="@string/trip_description"
+        android:visibility="gone"
         android:textSize="@dimen/_16sp" />
 
     <EditText
@@ -95,12 +97,15 @@
         android:gravity="top"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
+        android:visibility="gone"
         android:minLines="2" />
 
     <LinearLayout
+        android:id="@+id/llBillsButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <Button
