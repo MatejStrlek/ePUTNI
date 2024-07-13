@@ -60,4 +60,5 @@
     <string name="role_failed_save">Neuspješno spremanje pozicije</string>
     <string name="failed_to_check_user_data">Failed to check user data</string>
     <string name="invalid_license_plate">Neispravna registracija</string>
+    <string name="trip_ended">Put završen</string>
 </resources>

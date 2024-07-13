@@ -10,19 +10,26 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import hr.algebra.eputni.R
 import hr.algebra.eputni.dao.FirestoreVehicles
+import hr.algebra.eputni.dao.FirestoreWarrants
 import hr.algebra.eputni.dao.VehicleRepository
+import hr.algebra.eputni.dao.WarrantRepository
 import hr.algebra.eputni.databinding.FragmentWarrantsBinding
+import hr.algebra.eputni.enums.TripType
 import hr.algebra.eputni.model.Vehicle
+import hr.algebra.eputni.model.Warrant
 
 class WarrantsFragment : Fragment() {
     private var _binding: FragmentWarrantsBinding? = null
     private val binding get() = _binding!!
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
     private var vehicleList = listOf<Vehicle>()
-    private var selectedVehicle: Vehicle? = null
     private var isMeasuringDistance = false
+    private var activeWarrant: Warrant? = null
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
+    }
+    private val warrantRepository: WarrantRepository by lazy {
+        FirestoreWarrants()
     }
 
     override fun onCreateView(
@@ -36,6 +43,8 @@ class WarrantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkActiveWarrant()
+
         binding.btnStartTrip.setOnClickListener {
             if (!fieldsValidated()) return@setOnClickListener
             startTrip()
@@ -44,7 +53,8 @@ class WarrantsFragment : Fragment() {
             endTrip()
         }
         binding.rbOptions.setOnCheckedChangeListener { _, checkedId ->
-            binding.llCities.visibility = if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
+            binding.llCities.visibility =
+                if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
         }
         fetchVehicles()
     }
@@ -52,7 +62,7 @@ class WarrantsFragment : Fragment() {
     private fun fieldsValidated(): Boolean {
         var isValid = true
 
-        if(binding.etStartKilometers.text.isNullOrEmpty()) {
+        if (binding.etStartKilometers.text.isNullOrEmpty()) {
             binding.etStartKilometers.error = getString(R.string.mondatory_start_km)
             isValid = false
         }
@@ -60,7 +70,7 @@ class WarrantsFragment : Fragment() {
             Toast.makeText(context, getString(R.string.select_car), Toast.LENGTH_SHORT).show()
             isValid = false
         }
-        if(binding.rbOptions.checkedRadioButtonId == -1) {
+        if (binding.rbOptions.checkedRadioButtonId == -1) {
             Toast.makeText(context, getString(R.string.select_option), Toast.LENGTH_SHORT).show()
             isValid = false
         }
@@ -76,22 +86,70 @@ class WarrantsFragment : Fragment() {
         return isValid
     }
 
+    private fun checkActiveWarrant() {
+        if (userId != null) {
+            warrantRepository.getActiveWarrant(userId, { warrant ->
+                if (warrant != null) {
+                    activeWarrant = warrant
+                    populateFields(warrant)
+                    true.disableStartFields()
+                    binding.btnEndTrip.visibility = View.VISIBLE
+                }
+            }, {
+                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+            })
+        }
+    }
+
+    private fun populateFields(warrant: Warrant) {
+        binding.etStartKilometers.setText(warrant.startKilometers.toString())
+        binding.spinnerSelectCar.setSelection(vehicleList.indexOfFirst { it.id == warrant.vehicleId })
+        if (warrant.tripType == TripType.CITY_BASED) {
+            binding.rbEnterCities.isChecked = true
+            binding.etStartCity.setText(warrant.startCity)
+            binding.etEndCity.setText(warrant.endCity)
+        } else {
+            binding.rbMeasureDistance.isChecked = true
+        }
+    }
+
     private fun startTrip() {
         true.disableStartFields()
         binding.btnEndTrip.visibility = View.VISIBLE
         Toast.makeText(context, getString(R.string.trip_started), Toast.LENGTH_SHORT).show()
 
-        selectedVehicle = vehicleList[binding.spinnerSelectCar.selectedItemPosition]
+        val selectedVehicleId = vehicleList[binding.spinnerSelectCar.selectedItemPosition].id
         val startKilometers = binding.etStartKilometers.text.toString().toInt()
 
-        if (binding.rbEnterCities.isChecked) {
+        val travelWarrant = if (binding.rbEnterCities.isChecked) {
             val startCity = binding.etStartCity.text.toString()
             val endCity = binding.etEndCity.text.toString()
-        }
-        else {
+            Warrant(
+                userId = userId!!,
+                vehicleId = selectedVehicleId,
+                startKilometers = startKilometers,
+                startCity = startCity,
+                endCity = endCity,
+                tripType = TripType.CITY_BASED
+            )
+        } else {
             isMeasuringDistance = true
             startMeasuringDistance()
+            Warrant(
+                userId = userId!!,
+                vehicleId = selectedVehicleId,
+                startKilometers = startKilometers,
+                tripType = TripType.DISTANCE_BASED
+            )
         }
+
+        warrantRepository.startTrip(travelWarrant,
+            onSuccess = {
+                activeWarrant = travelWarrant
+            },
+            onFailure = {
+                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+            })
     }
 
     private fun startMeasuringDistance() {
@@ -99,7 +157,36 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun endTrip() {
+        val endKilometers = if (isMeasuringDistance) {
+            1
+        } else {
+            0
+        }
 
+        activeWarrant?.let { warrant ->
+            warrantRepository.endTrip(warrant, endKilometers,
+                onSuccess = {
+                    Toast.makeText(context, getString(R.string.trip_ended), Toast.LENGTH_SHORT)
+                        .show()
+                    false.disableStartFields()
+                    binding.btnEndTrip.visibility = View.GONE
+                    activeWarrant = null
+                },
+                onFailure = {
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+                })
+        }
+
+        clearFields()
+    }
+
+    private fun clearFields() {
+        binding.etStartKilometers.text?.clear()
+        binding.etStartCity.text?.clear()
+        binding.etEndCity.text?.clear()
+        binding.spinnerSelectCar.setSelection(0)
+        binding.rbOptions.clearCheck()
+        binding.llCities.visibility = View.GONE
     }
 
     private fun Boolean.disableStartFields() {
@@ -111,7 +198,7 @@ class WarrantsFragment : Fragment() {
         binding.etStartCity.isEnabled = !this
         binding.etEndCity.isEnabled = !this
 
-        binding.btnStartTrip.isEnabled = this
+        binding.btnStartTrip.isEnabled = !this
     }
 
     private fun fetchVehicles() {
@@ -127,7 +214,8 @@ class WarrantsFragment : Fragment() {
 
     private fun initSpinner() {
         val vehicleNames = vehicleList.map { it.vehicleName }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, vehicleNames)
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, vehicleNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSelectCar.adapter = adapter
     }
