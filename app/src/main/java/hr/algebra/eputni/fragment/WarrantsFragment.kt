@@ -18,6 +18,7 @@ import hr.algebra.eputni.databinding.FragmentWarrantsBinding
 import hr.algebra.eputni.enums.TripType
 import hr.algebra.eputni.model.Vehicle
 import hr.algebra.eputni.model.Warrant
+import hr.algebra.eputni.util.DialogUtils
 import hr.algebra.eputni.util.FileUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,7 +119,7 @@ class WarrantsFragment : Fragment() {
                         activeWarrant = warrant
                         populateFields(warrant)
                         true.disableStartFields()
-                        binding.btnEndTrip.visibility = View.VISIBLE
+                        toggleVisibleSecondPart(true)
                     }
                 }, {
                     Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
@@ -187,34 +188,40 @@ class WarrantsFragment : Fragment() {
     private fun endTrip() {
         if (!validateDescription()) return
 
-        //need to change when i add measuring distance
-        val endKilometers = if (isMeasuringDistance) 1 else null
-        val description = binding.etTripDescription.text.toString()
+        DialogUtils.showDeleteConfirmationDialog(
+            context = requireContext(),
+            title = getString(R.string.end_trip_question),
+            message = getString(R.string.end_trip_question_message)
+        ) {
+            //need to change when i add measuring distance
+            val endKilometers = if (isMeasuringDistance) 1 else null
+            val description = binding.etTripDescription.text.toString()
 
-        scope.launch {
-            activeWarrant?.let { warrant ->
-                warrantRepository.endTrip(warrant, endKilometers, description,
-                    onSuccess = {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.trip_ended),
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        }
-                        false.disableStartFields()
-                        binding.btnEndTrip.visibility = View.GONE
-                        activeWarrant = null
-                    },
-                    onFailure = {
-                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
-                    })
+            scope.launch {
+                activeWarrant?.let { warrant ->
+                    warrantRepository.endTrip(warrant, endKilometers, description,
+                        onSuccess = {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(
+                                    context,
+                                    getString(R.string.trip_ended),
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                            false.disableStartFields()
+                            binding.btnEndTrip.visibility = View.GONE
+                            activeWarrant = null
+                        },
+                        onFailure = {
+                            Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+                        })
+                }
             }
-        }
 
-        clearFields()
-        toggleVisibleSecondPart(false)
+            clearFields()
+            toggleVisibleSecondPart(false)
+        }
     }
 
     private fun toggleVisibleSecondPart(isVisible: Boolean) {

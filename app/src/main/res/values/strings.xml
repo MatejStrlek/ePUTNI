@@ -64,4 +64,6 @@
     <string name="mondatory_description">Obavezno upisati opis puta</string>
     <string name="select_file">Odaberi datoteku</string>
     <string name="gg">gg</string>
+    <string name="end_trip_question">Završiti putovanje?</string>
+    <string name="end_trip_question_message">Jeste li unijeli sve potrebne podatke?</string>
 </resources>
