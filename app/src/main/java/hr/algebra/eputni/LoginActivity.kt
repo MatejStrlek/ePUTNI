@@ -1,11 +1,9 @@
 package hr.algebra.eputni
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -41,13 +39,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= 34) {
-            overrideActivityTransition(
-                ComponentActivity.OVERRIDE_TRANSITION_OPEN,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-        } else overridePendingTransition(
+        overridePendingTransition(
             R.anim.fade_in,
             R.anim.fade_out
         )
@@ -63,7 +55,8 @@ class LoginActivity : AppCompatActivity() {
                     .setSupported(true)
                     .setServerClientId(webClientID)
                     .setFilterByAuthorizedAccounts(false)
-                    .build())
+                    .build()
+            )
             .build()
 
         binding.btnSignIn.setOnClickListener {
@@ -97,17 +90,31 @@ class LoginActivity : AppCompatActivity() {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
                             Log.d("one tap", "One-tap dialog was closed.")
-                            Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
+                            Snackbar.make(
+                                binding.root,
+                                "One-tap dialog was closed.",
+                                Snackbar.LENGTH_INDEFINITE
+                            ).show()
                         }
+
                         CommonStatusCodes.NETWORK_ERROR -> {
                             Log.d("one tap", "One-tap encountered a network error.")
-                            Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
+                            Snackbar.make(
+                                binding.root,
+                                "One-tap encountered a network error.",
+                                Snackbar.LENGTH_INDEFINITE
+                            ).show()
                         }
+
                         else -> {
-                            Log.d("one tap", "Couldn't get credential from result." +
-                                    " (${e.localizedMessage})")
-                            Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
-                                    " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
+                            Log.d(
+                                "one tap", "Couldn't get credential from result." +
+                                        " (${e.localizedMessage})"
+                            )
+                            Snackbar.make(
+                                binding.root, "Couldn't get credential from result.\" +\n" +
+                                        " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE
+                            ).show()
                         }
                     }
                 }
@@ -123,19 +130,23 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))){
+                    if (user != null && user.email != null && user.email!!.endsWith(getString(R.string.allowed_domain))) {
                         Log.d(TAG, "signInWithCredential:success")
                         checkAndSaveUser(user)
                     } else {
                         Log.w(TAG, "Sign-in failed: unauthorized domain")
-                        Toast.makeText(this,
-                            getString(R.string.unauthorized_domain), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.unauthorized_domain), Toast.LENGTH_SHORT
+                        ).show()
                         signOut()
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(this,
-                        getString(R.string.authentication_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        getString(R.string.authentication_failed), Toast.LENGTH_SHORT
+                    ).show()
                     updateInfo(null)
                 }
             }
@@ -154,8 +165,10 @@ class LoginActivity : AppCompatActivity() {
             },
             {
                 Log.w(TAG, "Error checking user data", it)
-                Toast.makeText(this,
-                    getString(R.string.failed_to_check_user_data), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.failed_to_check_user_data), Toast.LENGTH_SHORT
+                ).show()
                 signOut()
             })
     }
@@ -168,8 +181,10 @@ class LoginActivity : AppCompatActivity() {
             },
             {
                 Log.w(TAG, "Error saving user data", it)
-                Toast.makeText(this,
-                    getString(R.string.failed_to_save_user_data), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.failed_to_save_user_data), Toast.LENGTH_SHORT
+                ).show()
                 signOut()
             })
     }
@@ -185,7 +200,8 @@ class LoginActivity : AppCompatActivity() {
                 try {
                     startIntentSenderForResult(
                         result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0, null)
+                        null, 0, 0, 0, null
+                    )
                 } catch (e: Exception) {
                     Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
                 }

@@ -79,4 +79,7 @@
     <string name="end_kilometers">Stanje brojila na kraju puta</string>
     <string name="checked_by_finance_team">Potvrđeno od RIF-a</string>
     <string name="file_count">Broj unesenih računa</string>
+    <string name="title_activity_app_scan">AppScanActivity</string>
+    <string name="error_scan">Greška kod skeniranja</string>
+    <string name="error_cancelled_failed">Skeniranje prekinuto ili failano</string>
 </resources>

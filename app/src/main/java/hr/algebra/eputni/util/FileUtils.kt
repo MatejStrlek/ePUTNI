@@ -53,7 +53,7 @@ class FileUtils(
         }
     }
 
-    private suspend fun uploadFileToFirebase(uris: List<Uri>) {
+    fun uploadFileToFirebase(uris: List<Uri>) {
         scope.launch {
             val storageRef = FirebaseStorage.getInstance().reference
             val fileUrls = mutableListOf<String>()
@@ -62,6 +62,7 @@ class FileUtils(
                 uris.forEach { uri ->
                     val fileRef =
                         storageRef.child("warrants/${userId}/${System.currentTimeMillis()}.pdf")
+
                     fileRef.putFile(uri).await()
                     fileUrls.add(fileRef.downloadUrl.await().toString())
                 }

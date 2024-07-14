@@ -1,15 +1,22 @@
 package hr.algebra.eputni.fragment
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.zynksoftware.documentscanner.ScanActivity
+import com.zynksoftware.documentscanner.model.ScannerResults
+import hr.algebra.eputni.AppScanActivity
 import hr.algebra.eputni.R
 import hr.algebra.eputni.dao.FirestoreVehicles
 import hr.algebra.eputni.dao.FirestoreWarrants
@@ -42,6 +49,11 @@ class WarrantsFragment : Fragment() {
         FirestoreWarrants()
     }
 
+    companion object {
+        private const val SCAN_REQUEST_CODE = 1001
+        private const val REQUEST_CAMERA_PERMISSION = 1002
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,8 +84,15 @@ class WarrantsFragment : Fragment() {
             binding.llCities.visibility =
                 if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
         }
-
         binding.btnScanReceipt.setOnClickListener {
+            //todo: fix scan receipt
+            /*if (checkCameraPermission()) {
+                startCameraActivity()
+            }
+            else {
+                requestCameraPermission()
+            }*/
+            Toast.makeText(context, getString(R.string.scan_receipt), Toast.LENGTH_SHORT).show()
         }
         binding.btnUploadInvoice.setOnClickListener {
             fileUtils.selectPdfFile()
@@ -83,11 +102,59 @@ class WarrantsFragment : Fragment() {
         }
     }
 
+    private fun startCameraActivity() {
+        val intent = Intent(requireContext(), AppScanActivity::class.java)
+        startActivityForResult(intent, SCAN_REQUEST_CODE)
+    }
+
+    private fun requestCameraPermission() {
+        requestPermissions(arrayOf(android.Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCameraActivity()
+            } else {
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        fileUtils.handleActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            SCAN_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val fileUrl = data.getStringExtra("scannedFileUrl")
+                    if (fileUrl != null) {
+                        val fileUtils = FileUtils(this, warrantRepository, getString(R.string.scan_receipt))
+                        fileUtils.uploadFileToFirebase(listOf(Uri.parse(fileUrl)))
+                    }
+                    else {
+                        Toast.makeText(context, getString(R.string.error_scan), Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, getString(R.string.error_cancelled_failed), Toast.LENGTH_SHORT).show()
+                }
+            }
+            else -> fileUtils.handleActivityResult(requestCode, resultCode, data)
+        }
     }
 
     private fun fieldsValidationForTripStart(): Boolean {
