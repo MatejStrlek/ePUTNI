@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/_10sp"
+    android:padding="@dimen/_24sp"
     tools:context=".fragment.WarrantsFragment">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_10sp"
         android:text="@string/select_car"
-        android:textSize="@dimen/_16sp" />
+        android:textSize="@dimen/_18sp" />
 
     <Spinner
         android:id="@+id/spinnerSelectCar"
@@ -39,6 +39,7 @@
             android:id="@+id/rbEnterCities"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/_16sp"
             android:text="@string/enter_start_city" />
 
         <LinearLayout
@@ -71,6 +72,7 @@
             android:id="@+id/rbMeasureDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/_16sp"
             android:text="@string/measure_distance_with_mobile" />
     </RadioGroup>
 

@@ -21,6 +21,7 @@ class FileUtils(
     fun selectPdfFile() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "application/pdf"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             addCategory(Intent.CATEGORY_OPENABLE)
         }
         fragment.startActivityForResult(
@@ -31,33 +32,50 @@ class FileUtils(
 
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_PDF_REQUEST && resultCode == Activity.RESULT_OK) {
-            data?.data?.let {uri ->
-                uploadFileToFirebase(uri)
+            val selectedUris = mutableListOf<Uri>()
+            data?.clipData?.let { clipData ->
+                for (i in 0 until clipData.itemCount) {
+                    selectedUris.add(clipData.getItemAt(i).uri)
+                }
+            } ?: data?.data?.let { uri ->
+                selectedUris.add(uri)
+            }
+            if (selectedUris.isNotEmpty()) {
+                uploadFileToFirebase(selectedUris)
             }
         }
     }
 
-    private fun uploadFileToFirebase(uri: Uri) {
+    private fun uploadFileToFirebase(uris: List<Uri>) {
         val storageRef = FirebaseStorage.getInstance().reference
-        val fileRef = storageRef.child("warrants/${userId}/${System.currentTimeMillis()}.pdf")
+        val fileUrls = mutableListOf<String>()
 
-        fileRef.putFile(uri)
-            .addOnSuccessListener {
-                fileRef.downloadUrl.addOnSuccessListener {url ->
-                    linkFileToWarrant(url.toString())
+        uris.forEach { uri ->
+            val fileRef = storageRef.child("warrants/${userId}/${System.currentTimeMillis()}.pdf")
+            fileRef.putFile(uri)
+                .addOnSuccessListener {
+                    fileRef.downloadUrl.addOnSuccessListener { uri ->
+                        fileUrls.add(uri.toString())
+                        if (fileUrls.size == uris.size) {
+                            linkFileToWarrant(fileUrls)
+                        }
+                    }
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(fragment.context, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
-    private fun linkFileToWarrant(filesUrl: String) {
+    private fun linkFileToWarrant(fileUrls: List<String>) {
         warrantRepository.getActiveWarrant(userId!!,
             onSuccess = { warrant ->
-                warrantRepository.linkFilesToWarrant(warrant!!.id!!, listOf(filesUrl),
+                warrantRepository.linkFilesToWarrant(warrant!!.id!!, fileUrls,
                     onSuccess = {
-                        Toast.makeText(fragment.requireContext(), "Datoteka spremljena", Toast.LENGTH_SHORT).show()
+                        if (fileUrls.size == 1)
+                            Toast.makeText(fragment.requireContext(), "Datoteka spremljena", Toast.LENGTH_SHORT).show()
+                        else
+                            Toast.makeText(fragment.requireContext(), "Datoteke spremljene", Toast.LENGTH_SHORT).show()
                     }, {
                         Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     })
