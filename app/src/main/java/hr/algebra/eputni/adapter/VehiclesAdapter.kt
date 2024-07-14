@@ -1,6 +1,5 @@
 package hr.algebra.eputni.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +9,6 @@ import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
 
 class VehiclesAdapter(
-    private val context: Context,
     private val vehicles: MutableList<Vehicle>,
     private val onVehicleClick: (Vehicle) -> Unit,
     private val onVehicleLongClick: (Vehicle, Int) -> Unit

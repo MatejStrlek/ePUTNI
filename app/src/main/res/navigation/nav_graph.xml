@@ -8,8 +8,31 @@
     <fragment
         android:id="@+id/warrantsFragment"
         android:name="hr.algebra.eputni.fragment.WarrantsFragment"
-        android:label="Create Warrant"
-        tools:layout="@layout/fragment_warrants" />
+        android:label="@string/warrants"
+        tools:layout="@layout/fragment_warrants" >
+        <action
+            android:id="@+id/action_warrantsFragment_to_warrantsListFragment"
+            app:destination="@+id/warrantsListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/warrantsListFragment"
+        android:name="hr.algebra.eputni.fragment.WarrantsListFragment"
+        android:label="@string/warrants_list"
+        tools:layout="@layout/fragment_warrants_list" >
+        <action
+            android:id="@+id/action_warrantsListFragment_to_warrantDetailsFragment"
+            app:destination="@+id/warrantDetailsFragment" />
+        <action
+            android:id="@+id/action_warrantsListFragment_to_warrantsFragment"
+            app:destination="@+id/warrantsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/warrantDetailsFragment"
+        android:name="hr.algebra.eputni.fragment.WarrantDetailsFragment"
+        tools:layout="@layout/fragment_warrant_details"
+        android:label="@string/warrant_details" />
 
     <fragment
         android:id="@+id/vehiclesFragment"

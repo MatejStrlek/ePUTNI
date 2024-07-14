@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import hr.algebra.eputni.R
 import hr.algebra.eputni.dao.FirestoreVehicles
@@ -55,7 +56,11 @@ class WarrantsFragment : Fragment() {
         fileUtils = FileUtils(this, warrantRepository, getString(R.string.select_file))
 
         checkActiveWarrant()
+        initActions()
+        fetchVehicles()
+    }
 
+    private fun initActions() {
         binding.btnStartTrip.setOnClickListener {
             if (!fieldsValidationForTripStart()) return@setOnClickListener
             startTrip()
@@ -73,8 +78,9 @@ class WarrantsFragment : Fragment() {
         binding.btnUploadInvoice.setOnClickListener {
             fileUtils.selectPdfFile()
         }
-
-        fetchVehicles()
+        binding.fabListWarrants.setOnClickListener {
+            findNavController().navigate(R.id.action_warrantsFragment_to_warrantsListFragment)
+        }
     }
 
 
@@ -229,6 +235,7 @@ class WarrantsFragment : Fragment() {
         binding.etTripDescription.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.llBillsButtons.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.btnEndTrip.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.fabListWarrants.visibility = if (!isVisible) View.VISIBLE else View.GONE
     }
 
     private fun validateDescription(): Boolean {

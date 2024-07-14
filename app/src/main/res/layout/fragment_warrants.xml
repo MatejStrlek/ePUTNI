@@ -1,141 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/_24sp"
+    android:padding="@dimen/_10sp"
     tools:context=".fragment.WarrantsFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_10sp"
-        android:text="@string/select_car"
-        android:textSize="@dimen/_18sp" />
-
-    <Spinner
-        android:id="@+id/spinnerSelectCar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_10sp"
-        android:prompt="@string/select_car" />
-
-    <EditText
-        android:id="@+id/etStartKilometers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/count_kilometers_onStart"
-        android:importantForAutofill="no"
-        android:inputType="number" />
-
-    <RadioGroup
-        android:id="@+id/rbOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_18sp"
         android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/rbEnterCities"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sp"
+            android:text="@string/select_car"
+            android:textSize="@dimen/_18sp" />
+
+        <Spinner
+            android:id="@+id/spinnerSelectCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sp"
+            android:prompt="@string/select_car" />
+
+        <EditText
+            android:id="@+id/etStartKilometers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/count_kilometers_onStart"
+            android:importantForAutofill="no"
+            android:inputType="number" />
+
+        <RadioGroup
+            android:id="@+id/rbOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/rbEnterCities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_start_city"
+                android:textSize="@dimen/_16sp" />
+
+            <LinearLayout
+                android:id="@+id/llCities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <EditText
+                    android:id="@+id/etStartCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/start_city"
+                    android:importantForAutofill="no"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/etEndCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/destination"
+                    android:importantForAutofill="no"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/rbMeasureDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/measure_distance_with_mobile"
+                android:textSize="@dimen/_16sp" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btnStartTrip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sp"
+            android:text="@string/start_trip" />
+
+        <TextView
+            android:id="@+id/tvTripDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sp"
+            android:text="@string/trip_description"
             android:textSize="@dimen/_16sp"
-            android:text="@string/enter_start_city" />
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/etTripDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/llCities"
+            android:id="@+id/llBillsButtons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:layout_marginTop="@dimen/_16sp"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <EditText
-                android:id="@+id/etStartCity"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnScanReceipt"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/start_city"
-                android:importantForAutofill="no"
-                android:inputType="text" />
+                android:layout_marginEnd="@dimen/_4sp"
+                android:layout_weight="1"
+                android:text="@string/scan_receipt" />
 
-            <EditText
-                android:id="@+id/etEndCity"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnUploadInvoice"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/destination"
-                android:importantForAutofill="no"
-                android:inputType="text" />
+                android:layout_marginStart="@dimen/_4sp"
+                android:layout_weight="1"
+                android:text="@string/upload_invoice" />
         </LinearLayout>
 
-        <RadioButton
-            android:id="@+id/rbMeasureDistance"
+        <Button
+            android:id="@+id/btnEndTrip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/_16sp"
-            android:text="@string/measure_distance_with_mobile" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/btnStartTrip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sp"
-        android:text="@string/start_trip" />
-
-    <TextView
-        android:id="@+id/tvTripDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sp"
-        android:text="@string/trip_description"
-        android:visibility="gone"
-        android:textSize="@dimen/_16sp" />
-
-    <EditText
-        android:id="@+id/etTripDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine"
-        android:visibility="gone"
-        android:minLines="2" />
-
-    <LinearLayout
-        android:id="@+id/llBillsButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sp"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnScanReceipt"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_4sp"
-            android:layout_weight="1"
-            android:text="@string/scan_receipt" />
-
-        <Button
-            android:id="@+id/btnUploadInvoice"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sp"
-            android:layout_weight="1"
-            android:text="@string/upload_invoice" />
+            android:backgroundTint="@color/estudent_red"
+            android:text="@string/end_trip"
+            android:textColor="@color/white"
+            android:visibility="gone" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnEndTrip"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabListWarrants"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/estudent_red"
-        android:textColor="@color/white"
-        android:text="@string/end_trip"
-        android:visibility="gone" />
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/_18sp"
+        android:layout_marginBottom="@dimen/_100sp"
+        android:src="@drawable/ic_list"
+        android:visibility="visible"
+        style="@style/CustomFloatingActionButton"
+        android:contentDescription="@string/warrants_list"/>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

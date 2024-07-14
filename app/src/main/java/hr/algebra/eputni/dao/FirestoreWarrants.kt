@@ -2,6 +2,7 @@ package hr.algebra.eputni.dao
 
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import hr.algebra.eputni.model.Warrant
 import kotlinx.coroutines.tasks.await
 
@@ -84,6 +85,25 @@ class FirestoreWarrants: WarrantRepository {
             .update("files", FieldValue.arrayUnion(*filesUrl.toTypedArray()))
             .addOnSuccessListener {
                 onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+            .await()
+    }
+
+    override suspend fun fetchWarrants(
+        userId: String,
+        onSuccess: (List<Warrant>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(WARRANTS)
+            .whereEqualTo("userId", userId)
+            .orderBy("startTime", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
+                val warrants = documents.toObjects(Warrant::class.java)
+                onSuccess(warrants)
             }
             .addOnFailureListener {
                 onFailure(it)

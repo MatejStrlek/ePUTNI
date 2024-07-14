@@ -51,24 +51,24 @@ class VehiclesListFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        adapter = VehiclesAdapter(requireContext(), vehicles,
+        adapter = VehiclesAdapter(vehicles,
             onVehicleClick = { vehicle ->
-                val bundle = Bundle().apply {
-                    putParcelable(getString(R.string.vehicle), vehicle)
+            val bundle = Bundle().apply {
+                putParcelable(getString(R.string.vehicle), vehicle)
+            }
+            findNavController().navigate(R.id.action_vehiclesListFragment_to_vehicleFragment, bundle)
+        }
+        ) { vehicle, position ->
+            DialogUtils.showDeleteConfirmationDialog(
+                context = requireContext(),
+                title = getString(R.string.delete_vehicle),
+                message = getString(R.string.delete_confirmation_message)
+            ) {
+                scope.launch {
+                    deleteVehicle(vehicle, position)
                 }
-                findNavController().navigate(R.id.action_vehiclesListFragment_to_vehicleFragment, bundle)
-            },
-            onVehicleLongClick = { vehicle, position ->
-                DialogUtils.showDeleteConfirmationDialog(
-                    context = requireContext(),
-                    title = getString(R.string.delete_vehicle),
-                    message = getString(R.string.delete_confirmation_message)
-                ) {
-                    scope.launch {
-                        deleteVehicle(vehicle, position)
-                    }
-                }
-            })
+            }
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter

@@ -11,7 +11,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile">Profil</string>
     <string name="vehicles">Vozila</string>
-    <string name="warrants">Nalozi</string>
+    <string name="warrants">Putni nalozi</string>
     <string name="vehicle_model_example">Model vozila (npr. Mazda CX30)</string>
     <string name="vehicle_name">Ime vozila</string>
     <string name="license_plate_example">Registracija (npr. ZG1234ZG)</string>
@@ -36,7 +36,7 @@
     <string name="vehicle_updated">Vozilo ažurirano</string>
     <string name="update_vehicle">Ažuriraj vozilo</string>
     <string name="select_car">Odaberite vozilo</string>
-    <string name="count_kilometers_onStart">Stanje brojila na početku</string>
+    <string name="count_kilometers_onStart">Stanje brojila na početku puta</string>
     <string name="enter_start_city">Unesi gradove</string>
     <string name="start_city">Početna lokacija</string>
     <string name="destination">Destinacija</string>
@@ -65,5 +65,18 @@
     <string name="select_file">Odaberi datoteku</string>
     <string name="gg">gg</string>
     <string name="end_trip_question">Završiti putovanje?</string>
-    <string name="end_trip_question_message">Jeste li unijeli sve potrebne podatke?</string>
+    <string name="end_trip_question_message">Jeste li unjeli sve potrebne podatke?</string>
+    <string name="warrants_list">Lista putnih naloga</string>
+    <string name="no_warrants">Nema putnih naloga!</string>
+    <string name="warrant_add">Dodaj putni nalog</string>
+    <string name="test_warrant_name">Test destinacija</string>
+    <string name="test_time_finished">Test vrijeme završetka</string>
+    <string name="warrant">warrant</string>
+    <string name="warrant_details">Detalji putnog naloga</string>
+    <string name="start_time">Vrijeme početka puta</string>
+    <string name="end_time">Vrijeme kraja puta</string>
+    <string name="end_city">Završna lokacija</string>
+    <string name="end_kilometers">Stanje brojila na kraju puta</string>
+    <string name="checked_by_finance_team">Potvrđeno od RIF-a</string>
+    <string name="file_count">Broj unesenih računa</string>
 </resources>

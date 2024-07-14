@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/_10sp"
+    tools:context=".fragment.WarrantsListFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_18sp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        />
+
+    <TextView
+        android:id="@+id/tvEmptyListMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_warrants"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textSize="@dimen/_18sp"
+        android:textColor="@android:color/darker_gray"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddWarrant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/_18sp"
+        android:layout_marginBottom="@dimen/_100sp"
+        android:src="@drawable/ic_plus"
+        style="@style/CustomFloatingActionButton"
+        android:contentDescription="@string/warrant_add"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

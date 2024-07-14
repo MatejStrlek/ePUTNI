@@ -7,4 +7,5 @@ interface WarrantRepository {
     suspend fun endTrip(warrant: Warrant, endKilometers: Int?, description: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
     suspend fun getActiveWarrant(userId: String, onSuccess: (Warrant?) -> Unit, onFailure: (Exception) -> Unit)
     suspend fun linkFilesToWarrant(warrantId: String, filesUrl: List<String>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+    suspend fun fetchWarrants(userId: String, onSuccess: (List<Warrant>) -> Unit, onFailure: (Exception) -> Unit)
 }
