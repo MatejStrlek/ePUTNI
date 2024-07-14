@@ -2,12 +2,13 @@ package hr.algebra.eputni.dao
 
 import com.google.firebase.firestore.FirebaseFirestore
 import hr.algebra.eputni.model.Vehicle
+import kotlinx.coroutines.tasks.await
 
 class FirestoreVehicles : VehicleRepository {
     private val db = FirebaseFirestore.getInstance()
     private val VEHICLES: String = "vehicles"
 
-    override fun fetchVehicles(
+    override suspend fun fetchVehicles(
         userId: String,
         onSuccess: (List<Vehicle>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -26,9 +27,10 @@ class FirestoreVehicles : VehicleRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun saveVehicle(
+    override suspend fun saveVehicle(
         vehicle: Vehicle,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit) {
@@ -42,9 +44,10 @@ class FirestoreVehicles : VehicleRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun updateVehicle(
+    override suspend fun updateVehicle(
         vehicle: Vehicle,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
@@ -57,9 +60,10 @@ class FirestoreVehicles : VehicleRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun deleteVehicle(
+    override suspend fun deleteVehicle(
         vehicle: Vehicle,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
@@ -72,5 +76,6 @@ class FirestoreVehicles : VehicleRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 }

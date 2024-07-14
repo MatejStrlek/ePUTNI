@@ -17,12 +17,16 @@ import hr.algebra.eputni.dao.VehicleRepository
 import hr.algebra.eputni.databinding.FragmentVehiclesListBinding
 import hr.algebra.eputni.model.Vehicle
 import hr.algebra.eputni.util.DialogUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class VehiclesListFragment : Fragment() {
     private var _binding: FragmentVehiclesListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: VehiclesAdapter
     private val vehicles = mutableListOf<Vehicle>()
+    private val scope = CoroutineScope(Dispatchers.Main)
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -60,7 +64,9 @@ class VehiclesListFragment : Fragment() {
                     title = getString(R.string.delete_vehicle),
                     message = getString(R.string.delete_confirmation_message)
                 ) {
-                    deleteVehicle(vehicle, position)
+                    scope.launch {
+                        deleteVehicle(vehicle, position)
+                    }
                 }
             })
 
@@ -68,14 +74,18 @@ class VehiclesListFragment : Fragment() {
         binding.recyclerView.adapter = adapter
     }
 
-    private fun deleteVehicle(vehicle: Vehicle, position: Int) {
+    private suspend fun deleteVehicle(vehicle: Vehicle, position: Int) {
         vehicleRepository.deleteVehicle(vehicle,
             onSuccess = {
                 vehicles.removeAt(position)
                 adapter.notifyItemRemoved(position)
-                Toast.makeText(requireContext(),
-                    getString(R.string.vehicle_deleted), Toast.LENGTH_SHORT).show()
-                toggleEmptyListMessage(vehicles.isEmpty())
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.vehicle_deleted), Toast.LENGTH_SHORT
+                    ).show()
+                    toggleEmptyListMessage(vehicles.isEmpty())
+                }
             },
             onFailure = {
                 Toast.makeText(requireContext(),
@@ -85,21 +95,28 @@ class VehiclesListFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchCars() {
-        val userID = FirebaseAuth.getInstance().currentUser?.uid
-        if (userID != null) {
-            vehicleRepository.fetchVehicles(userID,
-                {
-                    vehicles.clear()
-                    vehicles.addAll(it)
-                    adapter.notifyDataSetChanged()
-                    toggleEmptyListMessage(vehicles.isEmpty())
-                },
-                {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                })
-        }
-        else {
-            Toast.makeText(requireContext(), getString(R.string.not_logged_in), Toast.LENGTH_SHORT).show()
+        scope.launch {
+            val userID = FirebaseAuth.getInstance().currentUser?.uid
+            if (userID != null) {
+                vehicleRepository.fetchVehicles(userID,
+                    {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            vehicles.clear()
+                            vehicles.addAll(it)
+                            adapter.notifyDataSetChanged()
+                            toggleEmptyListMessage(vehicles.isEmpty())
+                        }
+                    },
+                    {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    })
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.not_logged_in),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

@@ -19,6 +19,9 @@ import hr.algebra.eputni.enums.TripType
 import hr.algebra.eputni.model.Vehicle
 import hr.algebra.eputni.model.Warrant
 import hr.algebra.eputni.util.FileUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class WarrantsFragment : Fragment() {
@@ -29,6 +32,7 @@ class WarrantsFragment : Fragment() {
     private var isMeasuringDistance = false
     private var activeWarrant: Warrant? = null
     private lateinit var fileUtils: FileUtils
+    private val scope = CoroutineScope(Dispatchers.IO)
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -72,6 +76,7 @@ class WarrantsFragment : Fragment() {
         fetchVehicles()
     }
 
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -106,17 +111,19 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun checkActiveWarrant() {
-        if (userId != null) {
-            warrantRepository.getActiveWarrant(userId, { warrant ->
-                if (warrant != null) {
-                    activeWarrant = warrant
-                    populateFields(warrant)
-                    true.disableStartFields()
-                    binding.btnEndTrip.visibility = View.VISIBLE
-                }
-            }, {
-                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
-            })
+        scope.launch {
+            if (userId != null) {
+                warrantRepository.getActiveWarrant(userId, { warrant ->
+                    if (warrant != null) {
+                        activeWarrant = warrant
+                        populateFields(warrant)
+                        true.disableStartFields()
+                        binding.btnEndTrip.visibility = View.VISIBLE
+                    }
+                }, {
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+                })
+            }
         }
     }
 
@@ -162,13 +169,15 @@ class WarrantsFragment : Fragment() {
             )
         }
 
-        warrantRepository.startTrip(travelWarrant,
-            onSuccess = {
-                activeWarrant = travelWarrant
-            },
-            onFailure = {
-                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
-            })
+        scope.launch {
+            warrantRepository.startTrip(travelWarrant,
+                onSuccess = {
+                    activeWarrant = travelWarrant
+                },
+                onFailure = {
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+                })
+        }
     }
 
     private fun startMeasuringDistance() {
@@ -182,18 +191,26 @@ class WarrantsFragment : Fragment() {
         val endKilometers = if (isMeasuringDistance) 1 else null
         val description = binding.etTripDescription.text.toString()
 
-        activeWarrant?.let { warrant ->
-            warrantRepository.endTrip(warrant, endKilometers, description,
-                onSuccess = {
-                    Toast.makeText(context, getString(R.string.trip_ended), Toast.LENGTH_SHORT)
-                        .show()
-                    false.disableStartFields()
-                    binding.btnEndTrip.visibility = View.GONE
-                    activeWarrant = null
-                },
-                onFailure = {
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
-                })
+        scope.launch {
+            activeWarrant?.let { warrant ->
+                warrantRepository.endTrip(warrant, endKilometers, description,
+                    onSuccess = {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.trip_ended),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
+                        false.disableStartFields()
+                        binding.btnEndTrip.visibility = View.GONE
+                        activeWarrant = null
+                    },
+                    onFailure = {
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
+                    })
+            }
         }
 
         clearFields()
@@ -240,13 +257,17 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun fetchVehicles() {
-        if (userId != null) {
-            vehicleRepository.fetchVehicles(userId, { vehicles ->
-                vehicleList = vehicles
-                initSpinner()
-            }, { exception ->
-                Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_SHORT).show()
-            })
+        scope.launch {
+            if (userId != null) {
+                vehicleRepository.fetchVehicles(userId, { vehicles ->
+                    vehicleList = vehicles
+                    CoroutineScope(Dispatchers.Main).launch {
+                        initSpinner()
+                    }
+                }, { exception ->
+                    Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+                })
+            }
         }
     }
 

@@ -3,12 +3,13 @@ package hr.algebra.eputni.dao
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import hr.algebra.eputni.model.Warrant
+import kotlinx.coroutines.tasks.await
 
 class FirestoreWarrants: WarrantRepository {
     private val db = FirebaseFirestore.getInstance()
     private val WARRANTS: String = "warrants"
 
-    override fun startTrip(warrant: Warrant, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    override suspend fun startTrip(warrant: Warrant, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val documentRef = db.collection(WARRANTS).document()
         warrant.id = documentRef.id
 
@@ -19,9 +20,10 @@ class FirestoreWarrants: WarrantRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun endTrip(
+    override suspend fun endTrip(
         warrant: Warrant,
         endKilometers: Int?,
         description: String,
@@ -46,9 +48,10 @@ class FirestoreWarrants: WarrantRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun getActiveWarrant(
+    override suspend fun getActiveWarrant(
         userId: String,
         onSuccess: (Warrant?) -> Unit,
         onFailure: (Exception) -> Unit
@@ -68,9 +71,10 @@ class FirestoreWarrants: WarrantRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 
-    override fun linkFilesToWarrant(
+    override suspend fun linkFilesToWarrant(
         warrantId: String,
         filesUrl: List<String>,
         onSuccess: () -> Unit,
@@ -84,5 +88,6 @@ class FirestoreWarrants: WarrantRepository {
             .addOnFailureListener {
                 onFailure(it)
             }
+            .await()
     }
 }

@@ -16,12 +16,16 @@ import hr.algebra.eputni.dao.VehicleRepository
 import hr.algebra.eputni.databinding.FragmentVehiclesBinding
 import hr.algebra.eputni.enums.VehicleType
 import hr.algebra.eputni.model.Vehicle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class VehiclesFragment : Fragment() {
     private var _binding: FragmentVehiclesBinding? = null
     private val binding get() = _binding!!
     private var currentVehicle: Vehicle? = null
+    private val scope = CoroutineScope(Dispatchers.Main)
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -59,16 +63,17 @@ class VehiclesFragment : Fragment() {
         binding.btnSaveVehicle.setOnClickListener {
             if (!fieldsValidated()) return@setOnClickListener
 
-            if (vehicle == null) {
-                saveVehicleData()
-            }
-            else {
-                updateVehicleData(currentVehicle!!)
+            scope.launch {
+                if (vehicle == null) {
+                    saveVehicleData()
+                } else {
+                    updateVehicleData(currentVehicle!!)
+                }
             }
         }
     }
 
-    private fun updateVehicleData(currentVehicle: Vehicle) {
+    private suspend fun updateVehicleData(currentVehicle: Vehicle) {
         val vehicleName = binding.etVehicleName.text.toString()
         val vehicleModel = binding.etVehicleModel.text.toString()
         val vehicleType = VehicleType.entries[binding.spinnerVehicleType.selectedItemPosition]
@@ -83,9 +88,15 @@ class VehiclesFragment : Fragment() {
 
         vehicleRepository.updateVehicle(updatedVehicle,
             onSuccess = {
-                Toast.makeText(requireContext(), getString(R.string.vehicle_updated), Toast.LENGTH_SHORT).show()
-                clearFields()
-                findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.vehicle_updated),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    clearFields()
+                    findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+                }
             },
             onFailure = {
                 Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -100,7 +111,7 @@ class VehiclesFragment : Fragment() {
         binding.etLicensePlate.setText(vehicle.licensePlate)
     }
 
-    private fun saveVehicleData() {
+    private suspend fun saveVehicleData() {
         val vehicleName = binding.etVehicleName.text.toString()
         val vehicleModel = binding.etVehicleModel.text.toString()
         val vehicleType = VehicleType.entries[binding.spinnerVehicleType.selectedItemPosition]
@@ -118,9 +129,15 @@ class VehiclesFragment : Fragment() {
 
             vehicleRepository.saveVehicle(vehicleData,
                 {
-                    Toast.makeText(requireContext(), getString(R.string.vehicle_saved), Toast.LENGTH_SHORT).show()
-                    clearFields()
-                    findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.vehicle_saved),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        clearFields()
+                        findNavController().navigate(R.id.action_vehicleFragment_to_vehiclesListFragment)
+                    }
                 },
                 {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()

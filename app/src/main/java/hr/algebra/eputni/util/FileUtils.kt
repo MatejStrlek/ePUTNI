@@ -8,6 +8,10 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import hr.algebra.eputni.dao.WarrantRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Suppress("DEPRECATION")
 class FileUtils(
@@ -17,6 +21,7 @@ class FileUtils(
 ) {
     private val PICK_PDF_REQUEST = 1
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     fun selectPdfFile() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
@@ -41,46 +46,71 @@ class FileUtils(
                 selectedUris.add(uri)
             }
             if (selectedUris.isNotEmpty()) {
-                uploadFileToFirebase(selectedUris)
+                scope.launch {
+                    uploadFileToFirebase(selectedUris)
+                }
             }
         }
     }
 
-    private fun uploadFileToFirebase(uris: List<Uri>) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val fileUrls = mutableListOf<String>()
+    private suspend fun uploadFileToFirebase(uris: List<Uri>) {
+        scope.launch {
+            val storageRef = FirebaseStorage.getInstance().reference
+            val fileUrls = mutableListOf<String>()
 
-        uris.forEach { uri ->
-            val fileRef = storageRef.child("warrants/${userId}/${System.currentTimeMillis()}.pdf")
-            fileRef.putFile(uri)
-                .addOnSuccessListener {
-                    fileRef.downloadUrl.addOnSuccessListener { uri ->
-                        fileUrls.add(uri.toString())
-                        if (fileUrls.size == uris.size) {
-                            linkFileToWarrant(fileUrls)
-                        }
-                    }
+            try {
+                uris.forEach { uri ->
+                    val fileRef =
+                        storageRef.child("warrants/${userId}/${System.currentTimeMillis()}.pdf")
+                    fileRef.putFile(uri).await()
+                    fileUrls.add(fileRef.downloadUrl.await().toString())
                 }
-                .addOnFailureListener {
-                    Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                linkFilesToWarrant(fileUrls)
+            } catch (e: Exception) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(fragment.requireContext(), e.message, Toast.LENGTH_SHORT).show()
                 }
+            }
         }
     }
 
-    private fun linkFileToWarrant(fileUrls: List<String>) {
-        warrantRepository.getActiveWarrant(userId!!,
-            onSuccess = { warrant ->
-                warrantRepository.linkFilesToWarrant(warrant!!.id!!, fileUrls,
-                    onSuccess = {
-                        if (fileUrls.size == 1)
-                            Toast.makeText(fragment.requireContext(), "Datoteka spremljena", Toast.LENGTH_SHORT).show()
-                        else
-                            Toast.makeText(fragment.requireContext(), "Datoteke spremljene", Toast.LENGTH_SHORT).show()
-                    }, {
-                        Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    })
-        }, {
-            Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
-        })
+    private suspend fun linkFilesToWarrant(fileUrls: List<String>) {
+        try {
+            warrantRepository.getActiveWarrant(userId!!,
+                onSuccess = { warrant ->
+                    scope.launch {
+                        warrantRepository.linkFilesToWarrant(warrant!!.id!!, fileUrls,
+                            onSuccess = {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    if (fileUrls.size == 1)
+                                        Toast.makeText(
+                                            fragment.requireContext(),
+                                            "Datoteka spremljena",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    else
+                                        Toast.makeText(
+                                            fragment.requireContext(),
+                                            "Datoteke spremljene",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                }
+                            }, {
+                                Toast.makeText(
+                                    fragment.requireContext(),
+                                    it.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            })
+                    }
+                },
+                onFailure = {
+                    Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                })
+        } catch (e: Exception) {
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(fragment.requireContext(), e.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
