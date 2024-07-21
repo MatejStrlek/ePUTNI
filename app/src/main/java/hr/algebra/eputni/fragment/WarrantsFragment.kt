@@ -70,7 +70,7 @@ class WarrantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fileUtils = FileUtils(null, this, warrantRepository, getString(R.string.select_file))
+        fileUtils = FileUtils(this, warrantRepository, getString(R.string.select_file))
 
         checkActiveWarrant()
         initActions()
@@ -175,7 +175,7 @@ class WarrantsFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val fileUrl = data.getStringExtra("scannedFileUrl")
                     if (fileUrl != null) {
-                        val fileUtils = FileUtils(null, this, warrantRepository, getString(R.string.scan_receipt))
+                        val fileUtils = FileUtils( this, warrantRepository, getString(R.string.scan_receipt))
                         fileUtils.uploadFileToFirebase(listOf(Uri.parse(fileUrl)))
                     }
                     else {
