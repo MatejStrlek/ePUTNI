@@ -10,13 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.zynksoftware.documentscanner.ScanActivity
-import com.zynksoftware.documentscanner.model.ScannerResults
-import hr.algebra.eputni.AppScanActivity
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import hr.algebra.eputni.R
 import hr.algebra.eputni.dao.FirestoreVehicles
 import hr.algebra.eputni.dao.FirestoreWarrants
@@ -42,6 +46,7 @@ class WarrantsFragment : Fragment() {
     private var activeWarrant: Warrant? = null
     private lateinit var fileUtils: FileUtils
     private val scope = CoroutineScope(Dispatchers.IO)
+    private lateinit var scannerLauncher: ActivityResultLauncher<IntentSenderRequest>
     private val vehicleRepository: VehicleRepository by lazy {
         FirestoreVehicles()
     }
@@ -65,11 +70,26 @@ class WarrantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fileUtils = FileUtils(this, warrantRepository, getString(R.string.select_file))
+        fileUtils = FileUtils(null, this, warrantRepository, getString(R.string.select_file))
 
         checkActiveWarrant()
         initActions()
         fetchVehicles()
+        setupActivityResultLauncher()
+    }
+
+    private fun setupActivityResultLauncher() {
+        scannerLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val scannerResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                scannerResult?.pdf?.let { pdf ->
+                    val pdfUri = pdf.uri
+                    scope.launch {
+                        fileUtils.uploadFileToFirebase(listOf(pdfUri))
+                    }
+                }
+            }
+        }
     }
 
     private fun initActions() {
@@ -85,13 +105,12 @@ class WarrantsFragment : Fragment() {
                 if (checkedId == R.id.rbEnterCities) View.VISIBLE else View.GONE
         }
         binding.btnScanReceipt.setOnClickListener {
-            //todo: fix scan receipt
-            /*if (checkCameraPermission()) {
-                startCameraActivity()
+            if (checkCameraPermission()) {
+                startDocumentScanner()
             }
             else {
                 requestCameraPermission()
-            }*/
+            }
             Toast.makeText(context, getString(R.string.scan_receipt), Toast.LENGTH_SHORT).show()
         }
         binding.btnUploadInvoice.setOnClickListener {
@@ -102,9 +121,22 @@ class WarrantsFragment : Fragment() {
         }
     }
 
-    private fun startCameraActivity() {
-        val intent = Intent(requireContext(), AppScanActivity::class.java)
-        startActivityForResult(intent, SCAN_REQUEST_CODE)
+    private fun startDocumentScanner() {
+        val options = GmsDocumentScannerOptions.Builder()
+            .setGalleryImportAllowed(false)
+            .setPageLimit(1)
+            .setResultFormats(GmsDocumentScannerOptions.RESULT_FORMAT_PDF)
+            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL)
+            .build()
+
+        val scanner = GmsDocumentScanning.getClient(options)
+        scanner.getStartScanIntent(requireActivity())
+            .addOnSuccessListener { intentSender ->
+                scannerLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), R.string.scanner_error, Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun requestCameraPermission() {
@@ -120,7 +152,7 @@ class WarrantsFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCameraActivity()
+                startDocumentScanner()
             } else {
                 Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
             }
@@ -143,7 +175,7 @@ class WarrantsFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val fileUrl = data.getStringExtra("scannedFileUrl")
                     if (fileUrl != null) {
-                        val fileUtils = FileUtils(this, warrantRepository, getString(R.string.scan_receipt))
+                        val fileUtils = FileUtils(null, this, warrantRepository, getString(R.string.scan_receipt))
                         fileUtils.uploadFileToFirebase(listOf(Uri.parse(fileUrl)))
                     }
                     else {

@@ -82,4 +82,5 @@
     <string name="title_activity_app_scan">AppScanActivity</string>
     <string name="error_scan">Greška kod skeniranja</string>
     <string name="error_cancelled_failed">Skeniranje prekinuto ili failano</string>
+    <string name="scanner_error">Skeniranje dokumenta neuspješno pokrenuto</string>
 </resources>

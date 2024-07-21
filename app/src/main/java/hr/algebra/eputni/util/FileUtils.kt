@@ -15,7 +15,8 @@ import kotlinx.coroutines.tasks.await
 
 @Suppress("DEPRECATION")
 class FileUtils(
-    private val fragment: Fragment,
+    private val activity: Activity?,
+    private val fragment: Fragment?,
     private val warrantRepository: WarrantRepository,
     private val message: String
 ) {
@@ -29,7 +30,7 @@ class FileUtils(
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             addCategory(Intent.CATEGORY_OPENABLE)
         }
-        fragment.startActivityForResult(
+        fragment?.startActivityForResult(
             Intent.createChooser(intent, message),
             PICK_PDF_REQUEST
         )
@@ -69,7 +70,7 @@ class FileUtils(
                 linkFilesToWarrant(fileUrls)
             } catch (e: Exception) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(fragment.requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(fragment?.requireContext() ?: activity, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -85,20 +86,20 @@ class FileUtils(
                                 CoroutineScope(Dispatchers.Main).launch {
                                     if (fileUrls.size == 1)
                                         Toast.makeText(
-                                            fragment.requireContext(),
+                                            fragment?.requireContext() ?: activity,
                                             "Datoteka spremljena",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     else
                                         Toast.makeText(
-                                            fragment.requireContext(),
+                                            fragment?.requireContext() ?: activity,
                                             "Datoteke spremljene",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                 }
                             }, {
                                 Toast.makeText(
-                                    fragment.requireContext(),
+                                    fragment?.requireContext() ?: activity,
                                     it.message,
                                     Toast.LENGTH_SHORT
                                 ).show()
@@ -106,11 +107,11 @@ class FileUtils(
                     }
                 },
                 onFailure = {
-                    Toast.makeText(fragment.requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(fragment?.requireContext() ?: activity, it.message, Toast.LENGTH_SHORT).show()
                 })
         } catch (e: Exception) {
             CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(fragment.requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(fragment?.requireContext() ?: activity, e.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
