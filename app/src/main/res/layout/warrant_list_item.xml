@@ -42,7 +42,7 @@
         android:id="@+id/ivWarrantChecked"
         android:layout_width="@dimen/_50sp"
         android:layout_height="@dimen/_50sp"
-        android:layout_marginEnd="@dimen/_16sp"
+        android:layout_marginEnd="@dimen/_8sp"
         tools:src="@drawable/ic_checked_yes"
         android:importantForAccessibility="no" />
 
