@@ -22,8 +22,10 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import hr.algebra.eputni.R
+import hr.algebra.eputni.dao.FirestoreUserLogin
 import hr.algebra.eputni.dao.FirestoreVehicles
 import hr.algebra.eputni.dao.FirestoreWarrants
+import hr.algebra.eputni.dao.UserRepository
 import hr.algebra.eputni.dao.VehicleRepository
 import hr.algebra.eputni.dao.WarrantRepository
 import hr.algebra.eputni.databinding.FragmentWarrantsBinding
@@ -32,6 +34,7 @@ import hr.algebra.eputni.model.Vehicle
 import hr.algebra.eputni.model.Warrant
 import hr.algebra.eputni.util.DialogUtils
 import hr.algebra.eputni.util.FileUtils
+import hr.algebra.eputni.util.TimeUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +55,9 @@ class WarrantsFragment : Fragment() {
     }
     private val warrantRepository: WarrantRepository by lazy {
         FirestoreWarrants()
+    }
+    private val userRepository: UserRepository by lazy {
+        FirestoreUserLogin()
     }
 
     companion object {
@@ -79,17 +85,19 @@ class WarrantsFragment : Fragment() {
     }
 
     private fun setupActivityResultLauncher() {
-        scannerLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == AppCompatActivity.RESULT_OK) {
-                val scannerResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                scannerResult?.pdf?.let { pdf ->
-                    val pdfUri = pdf.uri
-                    scope.launch {
-                        fileUtils.uploadFileToFirebase(listOf(pdfUri))
+        scannerLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                    val scannerResult =
+                        GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    scannerResult?.pdf?.let { pdf ->
+                        val pdfUri = pdf.uri
+                        scope.launch {
+                            fileUtils.uploadFileToFirebase(listOf(pdfUri))
+                        }
                     }
                 }
             }
-        }
     }
 
     private fun initActions() {
@@ -107,8 +115,7 @@ class WarrantsFragment : Fragment() {
         binding.btnScanReceipt.setOnClickListener {
             if (checkCameraPermission()) {
                 startDocumentScanner()
-            }
-            else {
+            } else {
                 requestCameraPermission()
             }
             Toast.makeText(context, getString(R.string.scan_receipt), Toast.LENGTH_SHORT).show()
@@ -154,7 +161,8 @@ class WarrantsFragment : Fragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startDocumentScanner()
             } else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -175,16 +183,22 @@ class WarrantsFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val fileUrl = data.getStringExtra("scannedFileUrl")
                     if (fileUrl != null) {
-                        val fileUtils = FileUtils( this, warrantRepository, getString(R.string.scan_receipt))
+                        val fileUtils =
+                            FileUtils(this, warrantRepository, getString(R.string.scan_receipt))
                         fileUtils.uploadFileToFirebase(listOf(Uri.parse(fileUrl)))
-                    }
-                    else {
-                        Toast.makeText(context, getString(R.string.error_scan), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, getString(R.string.error_scan), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(context, getString(R.string.error_cancelled_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.error_cancelled_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
             else -> fileUtils.handleActivityResult(requestCode, resultCode, data)
         }
     }
@@ -306,14 +320,28 @@ class WarrantsFragment : Fragment() {
                 activeWarrant?.let { warrant ->
                     warrantRepository.endTrip(warrant, endKilometers, description,
                         onSuccess = {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.trip_ended),
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            warrant.endTime = System.currentTimeMillis()
+                            userRepository.getUser(userId!!, { user ->
+                                if (user.email != null) {
+                                    createAndSendEmail(
+                                        warrant,
+                                        user.displayName ?: "",
+                                        TimeUtils.millsToReadableDate(warrant.endTime ?: 0))
+                                }
+                            }, { exception ->
                                 Toast.makeText(
                                     context,
-                                    getString(R.string.trip_ended),
+                                    exception.localizedMessage,
                                     Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+                                ).show()
+                            })
+
                             false.disableStartFields()
                             binding.btnEndTrip.visibility = View.GONE
                             activeWarrant = null
@@ -326,6 +354,35 @@ class WarrantsFragment : Fragment() {
 
             clearFields()
             toggleVisibleSecondPart(false)
+        }
+    }
+
+    private fun createAndSendEmail(
+        warrant: Warrant,
+        displayName: String,
+        dateTime: String
+    ) {
+        val subject = getString(R.string.eputni_warrant_sent)
+        val body = """
+        Detalji putnog naloga:
+        Ime i prezime člana: $displayName
+        Vrijeme završetka puta: $dateTime
+        Od: ${warrant.startCity}
+        Do: ${warrant.endCity}
+        """.trimIndent()
+
+        val emailIntent = Intent(Intent(Intent.ACTION_SEND)).apply {
+            type = "message/rfc822"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_address_for_sending)))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+            `package` = "com.google.android.gm"
+        }
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.sending_email)))
+        } catch (e: Exception) {
+            Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
