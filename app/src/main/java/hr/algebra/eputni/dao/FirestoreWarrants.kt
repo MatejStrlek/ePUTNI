@@ -33,7 +33,7 @@ class FirestoreWarrants: WarrantRepository {
     ) {
         val updateData = mutableMapOf<String, Any>(
             "finished" to true,
-            /*"endTime" to System.currentTimeMillis(),*/
+            "endTime" to System.currentTimeMillis(),
             "description" to description
         )
 

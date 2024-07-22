@@ -326,13 +326,11 @@ class WarrantsFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
 
-                            warrant.endTime = System.currentTimeMillis()
                             userRepository.getUser(userId!!, { user ->
                                 if (user.email != null) {
                                     createAndSendEmail(
                                         warrant,
-                                        user.displayName ?: "",
-                                        TimeUtils.millsToReadableDate(warrant.endTime ?: 0))
+                                        user.displayName ?: "")
                                 }
                             }, { exception ->
                                 Toast.makeText(
@@ -359,14 +357,13 @@ class WarrantsFragment : Fragment() {
 
     private fun createAndSendEmail(
         warrant: Warrant,
-        displayName: String,
-        dateTime: String
+        displayName: String
     ) {
         val subject = getString(R.string.eputni_warrant_sent)
         val body = """
         Detalji putnog naloga:
         Ime i prezime člana: $displayName
-        Vrijeme završetka puta: $dateTime
+        Vrijeme završetka puta: ${System.currentTimeMillis()}
         Od: ${warrant.startCity}
         Do: ${warrant.endCity}
         """.trimIndent()
