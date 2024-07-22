@@ -363,7 +363,7 @@ class WarrantsFragment : Fragment() {
         val body = """
         Detalji putnog naloga:
         Ime i prezime člana: $displayName
-        Vrijeme završetka puta: ${System.currentTimeMillis()}
+        Vrijeme završetka puta: ${TimeUtils.millsToReadableDate(System.currentTimeMillis())}
         Od: ${warrant.startCity}
         Do: ${warrant.endCity}
         """.trimIndent()

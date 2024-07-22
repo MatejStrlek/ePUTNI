@@ -40,7 +40,7 @@ class WarrantsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(warrant: Warrant) {
             binding.tvWarrantDestination.text = warrant.startCity + " - " + warrant.endCity
-            binding.tvWarrantFinishedDate.text = TimeUtils.millsToReadableDate(warrant.endTime!!)
+            binding.tvWarrantFinishedDate.text = TimeUtils.millsToReadableDate(warrant.endTime ?: 0)
 
             val iconChecked = if (warrant.checkedByFinanceTeam) {
                 R.drawable.ic_checked_yes
