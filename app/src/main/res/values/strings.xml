@@ -46,7 +46,6 @@
     <string name="mondatory_vehicle_name">Ime vozila je obavezno</string>
     <string name="mondatory_vehicle_model">Model vozila je obavezan</string>
     <string name="mondatory_start_km">Stanje brojila obavezno</string>
-    <string name="select_option">Odaberi opciju za put</string>
     <string name="mondatory_start_city">Obavezna početna lokacija</string>
     <string name="mondatory_end_city">Obavezna destinacija</string>
     <string name="trip_description">Zadatak/opis puta</string>

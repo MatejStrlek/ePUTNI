@@ -26,7 +26,6 @@ class FirestoreWarrants: WarrantRepository {
 
     override suspend fun endTrip(
         warrant: Warrant,
-        endKilometers: Int?,
         description: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
@@ -36,10 +35,6 @@ class FirestoreWarrants: WarrantRepository {
             "endTime" to System.currentTimeMillis(),
             "description" to description
         )
-
-        if (endKilometers != null) {
-            updateData["endKilometers"] = endKilometers
-        }
 
         db.collection(WARRANTS).document(warrant.id!!)
             .update(updateData)

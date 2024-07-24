@@ -42,7 +42,6 @@ class WarrantDetailsFragment : Fragment() {
         binding.tvStartCity.text = warrant.startCity
         binding.tvEndCity.text = warrant.endCity
         binding.tvStartKilometers.text = warrant.startKilometers.toString()
-        binding.tvEndKilometers.text = warrant.endKilometers.toString()
         binding.tvDescription.text = warrant.description
         binding.tvFileCount.text = warrant.files.size.toString()
         binding.tvCheckedByFinanceTeam.text = warrant.checkedByFinanceTeam.toString()
