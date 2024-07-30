@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ePUTNI</string>
-    <string name="no_internet">No Internet!</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="no_internet">Nema interneta!</string>
+    <string name="sign_in_with_google">Google prijava</string>
     <string name="sign_out">Odjava</string>
     <string name="john_doe_estudent_hr">john.doe@estudent.hr</string>
     <string name="allowed_domain">\@estudent.hr</string>
@@ -26,9 +26,9 @@
     <string name="vehicle_add">Dodaj vozilo</string>
     <string name="vehicle_deleted">Vozilo izbrisano</string>
     <string name="error_deleting_vehicle">Greška kod brisanja</string>
-    <string name="unauthorized_domain">Unauthorized domain</string>
-    <string name="authentication_failed">Authentication Failed</string>
-    <string name="failed_to_save_user_data">Failed to save user data</string>
+    <string name="unauthorized_domain">Neautorizirana domena</string>
+    <string name="authentication_failed">Provjera autentičnosti neuspješna</string>
+    <string name="failed_to_save_user_data">Neuspješno spremanje podataka</string>
     <string name="delete_vehicle">Obrisati vozilo?</string>
     <string name="delete_confirmation_message">Jeste li sigurni?</string>
     <string name="no_vehicles">Nema upisanih vozila!</string>
@@ -64,7 +64,7 @@
     <string name="select_file">Odaberi datoteku</string>
     <string name="gg">gg</string>
     <string name="end_trip_question">Završiti putovanje?</string>
-    <string name="end_trip_question_message">Jeste li unjeli sve potrebne podatke?</string>
+    <string name="end_trip_question_message">Jeste li unijeli sve potrebne podatke?</string>
     <string name="warrants_list">Lista putnih naloga</string>
     <string name="no_warrants">Nema putnih naloga!</string>
     <string name="warrant_add">Dodaj putni nalog</string>
@@ -84,5 +84,5 @@
     <string name="scanner_error">Skeniranje dokumenta neuspješno pokrenuto</string>
     <string name="eputni_warrant_sent">ePUTNI - Putni nalog poslan!</string>
     <string name="email_address_for_sending">eputni.rif@estudent.hr</string>
-    <string name="sending_email">Slanje maila...</string>
+    <string name="sending_email">Slanje maila…</string>
 </resources>
