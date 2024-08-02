@@ -63,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnSignIn.setOnClickListener {
             Log.d(TAG, "Sign in clicked")
             binding.pbLoginScreen.visibility = View.VISIBLE
+            binding.btnSignIn.isEnabled = false
             signIn()
         }
     }
@@ -77,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         binding.pbLoginScreen.visibility = View.GONE
+        binding.btnSignIn.isEnabled = true
 
         if (requestCode == REQ_ONE_TAP) {
             if (resultCode == RESULT_OK && data != null) {
@@ -208,11 +210,13 @@ class LoginActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
                     binding.pbLoginScreen.visibility = View.GONE
+                    binding.btnSignIn.isEnabled = true
                 }
             }
             ?.addOnFailureListener(this) { e ->
                 Log.e(TAG, "Error in beginSignIn", e)
                 binding.pbLoginScreen.visibility = View.GONE
+                binding.btnSignIn.isEnabled = true
             }
     }
 
