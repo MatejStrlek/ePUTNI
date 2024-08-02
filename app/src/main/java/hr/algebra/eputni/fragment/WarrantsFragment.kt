@@ -251,8 +251,8 @@ class WarrantsFragment : Fragment() {
 
         val selectedVehicleId = vehicleList[binding.spinnerSelectCar.selectedItemPosition].id
         val startKilometers = binding.etStartKilometers.text.toString().toInt()
-        val startCity = binding.etStartCity.text.toString()
-        val endCity = binding.etEndCity.text.toString()
+        val startCity = binding.etStartCity.text.toString().trim()
+        val endCity = binding.etEndCity.text.toString().trim()
 
         val travelWarrant = Warrant(
             userId = userId!!,
@@ -281,7 +281,7 @@ class WarrantsFragment : Fragment() {
             title = getString(R.string.end_trip_question),
             message = getString(R.string.end_trip_question_message)
         ) {
-            val description = binding.etTripDescription.text.toString()
+            val description = binding.etTripDescription.text.toString().trim()
 
             scope.launch {
                 activeWarrant?.let { warrant ->

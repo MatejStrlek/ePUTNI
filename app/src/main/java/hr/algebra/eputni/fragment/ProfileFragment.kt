@@ -54,7 +54,7 @@ class ProfileFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        val currentRole = binding.etRole.text.toString()
+        val currentRole = binding.etRole.text.toString().trim()
         if (currentRole != originalRole) {
             updateUserRole(currentRole)
         }
@@ -110,7 +110,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun validateRoleField() {
-        val role = binding.etRole.text.toString()
+        val role = binding.etRole.text.toString().trim()
         val isValid = role.isNotEmpty()
 
         (activity as? MainActivity)?.setNavigationEnabled(isValid)

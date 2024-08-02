@@ -74,10 +74,10 @@ class VehiclesFragment : Fragment() {
     }
 
     private suspend fun updateVehicleData(currentVehicle: Vehicle) {
-        val vehicleName = binding.etVehicleName.text.toString()
-        val vehicleModel = binding.etVehicleModel.text.toString()
+        val vehicleName = binding.etVehicleName.text.toString().trim()
+        val vehicleModel = binding.etVehicleModel.text.toString().trim()
         val vehicleType = VehicleType.entries[binding.spinnerVehicleType.selectedItemPosition]
-        val licensePlate = binding.etLicensePlate.text.toString()
+        val licensePlate = binding.etLicensePlate.text.toString().trim()
 
         val updatedVehicle = currentVehicle.copy(
             vehicleName = vehicleName,
@@ -112,10 +112,10 @@ class VehiclesFragment : Fragment() {
     }
 
     private suspend fun saveVehicleData() {
-        val vehicleName = binding.etVehicleName.text.toString()
-        val vehicleModel = binding.etVehicleModel.text.toString()
+        val vehicleName = binding.etVehicleName.text.toString().trim()
+        val vehicleModel = binding.etVehicleModel.text.toString().trim()
         val vehicleType = VehicleType.entries[binding.spinnerVehicleType.selectedItemPosition]
-        val licensePlate = binding.etLicensePlate.text.toString()
+        val licensePlate = binding.etLicensePlate.text.toString().trim()
 
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
@@ -172,7 +172,7 @@ class VehiclesFragment : Fragment() {
             isValid = false
         }
 
-        if (!licensePlatePattern.matches(binding.etLicensePlate.text.toString())) {
+        if (!licensePlatePattern.matches(binding.etLicensePlate.text.toString().trim())) {
             binding.etLicensePlate.error = getString(R.string.invalid_license_plate)
             isValid = false
         }
