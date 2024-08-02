@@ -85,4 +85,5 @@
     <string name="eputni_warrant_sent">ePUTNI - Putni nalog poslan!</string>
     <string name="email_address_for_sending">eputni.rif@estudent.hr</string>
     <string name="sending_email">Slanje maila…</string>
+    <string name="login_eputni">Prijava u ePUTNI</string>
 </resources>
