@@ -3,6 +3,7 @@ package hr.algebra.eputni
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -61,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnSignIn.setOnClickListener {
             Log.d(TAG, "Sign in clicked")
+            binding.pbLoginScreen.visibility = View.VISIBLE
             signIn()
         }
     }
@@ -74,6 +76,7 @@ class LoginActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        binding.pbLoginScreen.visibility = View.GONE
 
         if (requestCode == REQ_ONE_TAP) {
             if (resultCode == RESULT_OK && data != null) {
@@ -204,10 +207,12 @@ class LoginActivity : AppCompatActivity() {
                     )
                 } catch (e: Exception) {
                     Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    binding.pbLoginScreen.visibility = View.GONE
                 }
             }
             ?.addOnFailureListener(this) { e ->
                 Log.e(TAG, "Error in beginSignIn", e)
+                binding.pbLoginScreen.visibility = View.GONE
             }
     }
 

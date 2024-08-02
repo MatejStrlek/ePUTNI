@@ -37,4 +37,11 @@
         android:layout_marginBottom="@dimen/_24sp"
         android:text="@string/sign_in_with_google" />
 
+    <ProgressBar
+        android:id="@+id/pbLoginScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
 </LinearLayout>
