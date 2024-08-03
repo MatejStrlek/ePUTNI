@@ -86,4 +86,6 @@
     <string name="email_address_for_sending">eputni.rif@estudent.hr</string>
     <string name="sending_email">Slanje maila…</string>
     <string name="login_eputni">Prijava u ePUTNI</string>
+    <string name="checked">Pregledano i potvrđeno</string>
+    <string name="not_checked">Nije povrđeno</string>
 </resources>

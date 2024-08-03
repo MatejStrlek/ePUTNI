@@ -44,6 +44,7 @@ class WarrantDetailsFragment : Fragment() {
         binding.tvStartKilometers.text = warrant.startKilometers.toString()
         binding.tvDescription.text = warrant.description
         binding.tvFileCount.text = warrant.files.size.toString()
-        binding.tvCheckedByFinanceTeam.text = warrant.checkedByFinanceTeam.toString()
+        binding.tvCheckedByFinanceTeam.text =
+            if (warrant.checkedByFinanceTeam) getString(R.string.checked) else getString(R.string.not_checked)
     }
 }
