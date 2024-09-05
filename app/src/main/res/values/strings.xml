@@ -88,4 +88,5 @@
     <string name="login_eputni">Prijava u ePUTNI</string>
     <string name="checked">Pregledano i potvrđeno</string>
     <string name="not_checked">Nije potvrđeno</string>
+    <string name="error">Greška</string>
 </resources>

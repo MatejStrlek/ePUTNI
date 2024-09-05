@@ -49,22 +49,38 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initLogin() {
-        oneTapClient = Identity.getSignInClient(this)
-        signInRequest = BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setServerClientId(webClientID)
-                    .setFilterByAuthorizedAccounts(false)
-                    .build()
-            )
-            .build()
+        try {
+            oneTapClient = Identity.getSignInClient(this)
+            signInRequest = BeginSignInRequest.builder()
+                .setGoogleIdTokenRequestOptions(
+                    BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                        .setSupported(true)
+                        .setServerClientId(webClientID)
+                        .setFilterByAuthorizedAccounts(false)
+                        .build()
+                )
+                .build()
 
-        binding.btnSignIn.setOnClickListener {
-            Log.d(TAG, "Sign in clicked")
-            binding.pbLoginScreen.visibility = View.VISIBLE
-            binding.btnSignIn.isEnabled = false
-            signIn()
+            binding.btnSignIn.setOnClickListener {
+                Log.d(TAG, "Sign in clicked")
+                binding.pbLoginScreen.visibility = View.VISIBLE
+                binding.btnSignIn.isEnabled = false
+                try {
+                    signIn()
+                }
+                catch (e: Exception) {
+                    Log.e(TAG, "Error signing in: ${e.localizedMessage}")
+                    binding.pbLoginScreen.visibility = View.GONE
+                    binding.btnSignIn.isEnabled = true
+                }
+            }
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "Error initializing One Tap: ${e.localizedMessage}")
+            Toast.makeText(
+                this,
+                getString(R.string.error), Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
