@@ -83,7 +83,7 @@
     <string name="error_cancelled_failed">Skeniranje prekinuto ili failano</string>
     <string name="scanner_error">Skeniranje dokumenta neuspješno pokrenuto</string>
     <string name="eputni_warrant_sent">ePUTNI - Putni nalog poslan!</string>
-    <string name="email_address_for_sending">eputni.rif@estudent.hr</string>
+    <string name="email_address_for_sending">rif.vip@estudent.hr</string>
     <string name="sending_email">Slanje maila…</string>
     <string name="login_eputni">Prijava u ePUTNI</string>
     <string name="checked">Pregledano i potvrđeno</string>

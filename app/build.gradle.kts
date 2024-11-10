@@ -14,8 +14,8 @@ android {
         applicationId = "hr.algebra.eputni"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "2.0"
+        versionCode = 7
+        versionName = "2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -24,9 +24,19 @@ android {
         buildConfigField("String", "webClientId", properties.getProperty("webClientId"))
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("D:\\Algebra\\Zavrsni_rad\\release-key.jks")
+            storePassword = "edcbrothers"
+            keyAlias = "mainkey"
+            keyPassword = "edcbrothers"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -62,12 +72,12 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
     implementation("androidx.activity:activity-compose:1.9.2")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2024.09.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -77,7 +87,7 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-android")
     implementation("androidx.camera:camera-view:1.3.4")
     implementation("com.google.mlkit:vision-common:17.3.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     testImplementation("junit:junit:4.13.2")
