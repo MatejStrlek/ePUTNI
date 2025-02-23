@@ -2,7 +2,7 @@
 
 
 ## About the Project
-**ePUTNI** is a software solution designed to digitize and automate the travel warrant process for student association eSTUDENT. It replaces manual paperwork with a mobile-based system, allowing members to create, manage, and track travel warrants efficiently while enabling the accounting team to approve and monitor requests through a [web app - ePUTNI Web](https://github.com/MatejStrlek/ePUTNI-web).
+**ePUTNI** is a software solution designed to digitize and automate the travel warrant process for student association [eSTUDENT](https://www.estudent.hr). It replaces manual paperwork with a mobile-based system, allowing members to create, manage, and track travel warrants efficiently while enabling the accounting team to approve and monitor requests through a [web app - ePUTNI Web](https://github.com/MatejStrlek/ePUTNI-web).
 
 This project was developed as part of a final thesis at **Algebra University** by **Matej Galić**, under the mentorship of **Danijel Kučak**.
 
